@@ -1,12 +1,19 @@
 {
-    "name": "codeigniter4/appstarter",
+    "name": "waldorfaugsburg/wifi",
     "type": "project",
-    "description": "CodeIgniter4 starter app",
-    "homepage": "https://codeigniter.com",
+    "description": "Web-application for managing wifi access",
     "license": "MIT",
+    "authors": [
+        {
+            "name": "Linus Groschke",
+            "email": "linus@elektronisch.dev",
+            "homepage": "https://elektronisch.dev"
+        }
+    ],
     "require": {
         "php": "^7.3 || ^8.0",
-        "codeigniter4/framework": "^4"
+        "codeigniter4/framework": "^4",
+        "waldorfaugsburg/auth-portal-php": "dev-master"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9",
@@ -32,10 +39,5 @@
     },
     "scripts": {
         "test": "phpunit"
-    },
-    "support": {
-        "forum": "http://forum.codeigniter.com/",
-        "source": "https://github.com/codeigniter4/CodeIgniter4",
-        "slack": "https://codeigniterchat.slack.com"
     }
 }
