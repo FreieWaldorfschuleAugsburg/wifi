@@ -13,7 +13,7 @@
     "require": {
         "php": "^7.3 || ^8.0",
         "codeigniter4/framework": "^4",
-        "waldorfaugsburg/auth-portal-php": "dev-master"
+        "art-of-wifi/unifi-api-client": "^1.1"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9",
