@@ -16,12 +16,20 @@ CI_ENVIRONMENT = production
 app.baseURL = ''
 
 #--------------------------------------------------------------------
-# DATABASE
+# ACTIVE DIRECTORY
 #--------------------------------------------------------------------
 
-database.default.hostname = localhost
-database.default.database = ci4
-database.default.username = root
-database.default.password = root
-database.default.DBDriver = MySQLi
-database.default.DBPrefix =
+ad.ldap = ''
+ad.domain = ''
+ad.admin.username = ''
+ad.admin.password = ''
+ad.adminGroup = ''
+ad.userGroup = ''
+
+#--------------------------------------------------------------------
+# UNIFI
+#--------------------------------------------------------------------
+
+unifi.baseURL = ''
+unifi.username = ''
+unifi.password = ''

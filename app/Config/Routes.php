@@ -38,8 +38,8 @@ $routes->get('/login', 'AuthenticationController::login');
 $routes->post('/login', 'AuthenticationController::handleLogin');
 $routes->get('/logout', 'AuthenticationController::logout');
 
-$routes->get('/changePassword', 'AuthenticationController::changePassword');
-$routes->post('/changePassword', 'AuthenticationController::handlePasswordChange');
+$routes->get('/admin/vouchers', 'VoucherListController::index');
+$routes->get('/admin/students', 'StudentListController::index');
 
 /*
  * --------------------------------------------------------------------

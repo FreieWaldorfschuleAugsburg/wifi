@@ -2,16 +2,23 @@
 
 namespace App\Controllers;
 
+use App\Models\AuthException;
+use CodeIgniter\HTTP\RedirectResponse;
+use function App\Helpers\handleAuthException;
 use function App\Helpers\isLoggedIn;
 
 class IndexController extends BaseController
 {
-    public function index()
+    public function index(): string|RedirectResponse
     {
-        helper('user');
+        helper('auth');
 
-        if (isLoggedIn()) {
-            return $this->render('IndexView');
+        try {
+            if (isLoggedIn()) {
+                return $this->render('IndexView');
+            }
+        } catch (AuthException $e){
+            return handleAuthException($e);
         }
 
         return redirect('login');

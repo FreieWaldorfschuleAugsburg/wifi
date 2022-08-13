@@ -4,14 +4,14 @@ namespace App\Models;
 
 class UserModel
 {
-    public int $id;
     public string $username;
+    public string $displayName;
     public bool $admin;
 
-    function __construct($id, $username, $admin)
+    function __construct($username, $displayName, $admin)
     {
-        $this->id = $id;
         $this->username = $username;
+        $this->displayName = $displayName;
         $this->admin = $admin;
     }
 }

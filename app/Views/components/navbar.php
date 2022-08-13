@@ -20,8 +20,6 @@
                                 <?= lang('menu.admin.vouchers') ?></a></li>
                         <li><a class="dropdown-item" href="<?= base_url('admin/students') ?>"><i class="fas fa-graduation-cap"></i>
                                 <?= lang('menu.admin.students') ?></a></li>
-                        <li><a class="dropdown-item" href="<?= base_url('admin/users') ?>"><i class="fas fa-users"></i>
-                                <?= lang('menu.admin.users') ?></a></li>
                     </ul>
                 </li>
             </ul>
@@ -29,11 +27,9 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                        data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-user"></i> <?= $user->username ?>
+                        <i class="fas fa-user"></i> <?= $user->displayName ?>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="<?= base_url('changePassword') ?>"><i
-                                        class="fas fa-key"></i> <?= lang('menu.self.changePassword') ?></a></li>
                         <li><a class="dropdown-item" href="<?= base_url('logout') ?>"><i
                                         class="fas fa-sign-out-alt"></i> <?= lang('menu.self.logout') ?></a></li>
                     </ul>

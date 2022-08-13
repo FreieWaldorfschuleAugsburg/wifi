@@ -2,94 +2,54 @@
 
 namespace App\Controllers;
 
+use App\Models\AuthException;
 use CodeIgniter\HTTP\RedirectResponse;
+use function App\Helpers\handleAuthException;
 use function App\Helpers\isLoggedIn;
-use function App\Helpers\user;
+use function App\Helpers\login;
+use function App\Helpers\logout;
 
 class AuthenticationController extends BaseController
 {
-    public function login()
+    /**
+     * @throws AuthException
+     */
+    public function login(): string|RedirectResponse
     {
-        helper('user');
+        helper('auth');
 
-        if (isLoggedIn()) {
-            return redirect('dashboard');
+        try {
+            if (isLoggedIn()) {
+                return redirect('/');
+            }
+        } catch (AuthException $e) {
+            // Ignoring the exception, because handling it would cause infinite loop
         }
 
+        // This will never throw an exception since we're not rendering the navbar
         return $this->render('LoginView', NULL, false);
+    }
+
+    public function handleLogin(): string|RedirectResponse
+    {
+        $username = trim($this->request->getPost('username'));
+        $password = trim($this->request->getPost('password'));
+
+        helper('auth');
+
+        try {
+            login($username, $password);
+        } catch (AuthException $e) {
+            return handleAuthException($e);
+        }
+
+        return redirect('/');
     }
 
     public function logout(): RedirectResponse
     {
-        helper('user');
-
-        if (!isLoggedIn()) {
-            return redirect('login');
-        }
-
-        session()->remove('USER_ID');
-
+        helper('auth');
+        logout();
         return redirect('login');
-    }
-
-    public function handleLogin(): RedirectResponse
-    {
-        $db = db_connect('default');
-
-        $username = trim($this->request->getPost('username'));
-        $password = trim($this->request->getPost('password'));
-
-        $userRow = $db->table('wifi_users')->where('username', $username)->select()->get()->getRow();
-        if (!isset($userRow)) {
-            return $this->redirectWithError($username, 'loginView.invalidUsername');
-        }
-
-        if (!password_verify($password, $userRow->password)) {
-            return $this->redirectWithError($username, 'loginView.invalidPassword');
-        }
-
-        session()->set('USER_ID', $userRow->id);
-
-        return redirect('dashboard');
-    }
-
-    public function changePassword()
-    {
-        helper('user');
-
-        if (!isLoggedIn()) {
-            return redirect('login');
-        }
-
-        return $this->render('PasswordChangeView');
-    }
-
-    public function handlePasswordChange(): RedirectResponse
-    {
-        helper('user');
-
-        $user = user();
-        if (is_null($user)) {
-            return redirect('login');
-        }
-
-        $password = trim($this->request->getPost('password'));
-        $repeatedPassword = trim($this->request->getPost('repeatedPassword'));
-
-        if ($password != $repeatedPassword) {
-            return redirect('changePassword')->with('error', 'passwordChangeView.notMatching');
-        }
-
-        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
-
-        $db = db_connect('default');
-        $db->table('wifi_users')->where('id', $user->id)->set(['password' => $hashedPassword])->update();
-
-        return redirect('logout');
-    }
-
-    public function redirectWithError($username, $error): RedirectResponse
-    {
-        return redirect('login')->with('username', $username)->with('error', $error);
     }
 }

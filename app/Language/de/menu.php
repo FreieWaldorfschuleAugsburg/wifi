@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'admin' => 'Admin',
+    'admin' => 'Administration',
     'admin.vouchers' => "Voucher",
     'admin.students' => "Schüler:innen",
     'admin.users' => "Benutzer",
