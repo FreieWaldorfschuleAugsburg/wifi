@@ -6,8 +6,6 @@ use App\Models\AuthException;
 use App\Models\UniFiException;
 use CodeIgniter\HTTP\RedirectResponse;
 use function App\Helpers\handleAuthException;
-use function App\Helpers\isAdmin;
-use function App\Helpers\isLoggedIn;
 use function App\Helpers\user;
 
 class StudentController extends BaseController
@@ -17,17 +15,23 @@ class StudentController extends BaseController
         helper('auth');
 
         try {
-            if (!isLoggedIn()) {
+            $user = user();
+
+            if (is_null($user)) {
                 return redirect('login');
             }
 
-            if (!isAdmin()) {
+            if (!$user->admin) {
                 return redirect('/');
             }
 
             helper('unifi');
             try {
                 $students = client()->list_radius_accounts();
+                if ($students === false) {
+                    return $this->render('StudentView', ['students' => [], 'error' => lang('students.error.unknown')]);
+                }
+
                 foreach ($students as $key => $value) {
                     if (isset($value->tunnel_type) || isset($value->tunnel_medium_type)) {
                         unset($students[$key]);
@@ -63,16 +67,15 @@ class StudentController extends BaseController
 
             helper('unifi');
             try {
-                $student = client()->create_radius_account($name, $password)[0];
-                if (!$student) {
-                    // TODO error handling?
+                $result = client()->create_radius_account($name, $password);
+                if ($result === false) {
+                    return redirect('admin/students')->with('error', lang('students.error.unknown'));
                 }
 
-                return redirect('admin/students')->with('student', $student);
+                return redirect('admin/students')->with('student', $result[0]);
             } catch (UniFiException $ue) {
+                return redirect('admin/students')->with('error', $ue->getMessage());
             }
-
-            return redirect('admin/students');
         } catch (AuthException $e) {
             return handleAuthException($e);
         }

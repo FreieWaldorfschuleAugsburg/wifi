@@ -1,7 +1,8 @@
 <div class="row gx-4 mt-3 justify-content-center">
     <div class="col-lg-10">
-        <?= !empty(session('voucher')) ? '<div class="alert alert-success mb-3 text-center"> <i class="fas fa-check-circle fa-5x"></i><br/><h1>Voucher erstellt!</h1><h4>' . session('voucher')->code . '</h4></div>' : '' ?>
-        <?= isset($error) ? '<div class="alert alert-danger mb-3"> <i class="fas fa-exclamation-triangle"></i> <b>' . lang('vouchers.error') . '</b> ' . $error . '</div>' : '' ?>
+        <?= !empty(session('voucher')) ? '<div class="alert alert-success mb-3 text-center"> <i class="fas fa-check-circle fa-5x"></i><br/><h1>' . lang('vouchers.created') . '</h1><h4>' . session('voucher')->code . '</h4></div>' : '' ?>
+        <?= isset($error) ? '<div class="alert alert-danger mb-3"> <i class="fas fa-exclamation-triangle"></i> <b>' . lang('vouchers.error.title') . '</b> ' . $error . '</div>' : '' ?>
+        <?= !empty(session('error')) ? '<div class="alert alert-danger mb-3"> <i class="fas fa-exclamation-triangle"></i> <b>' . lang('vouchers.error.title') . '</b> ' . session('error') . '</div>' : '' ?>
 
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">

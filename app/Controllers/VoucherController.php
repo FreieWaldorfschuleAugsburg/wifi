@@ -28,6 +28,10 @@ class VoucherController extends BaseController
             helper('unifi');
             try {
                 $vouchers = client()->stat_voucher();
+                if ($vouchers === false) {
+                    return $this->render('VoucherView', ['vouchers' => [], 'error' => lang('vouchers.error.unknown')]);
+                }
+
                 return $this->render('VoucherView', ['vouchers' => $vouchers]);
             } catch (UniFiException $ue) {
                 return $this->render('VoucherView', ['vouchers' => [], 'error' => $ue->getMessage()]);
@@ -59,6 +63,9 @@ class VoucherController extends BaseController
             helper('unifi');
             try {
                 $result = client()->create_voucher($duration * $unit, 1, $quota, $user->username);
+                if ($result === false) {
+                    return redirect('admin/vouchers')->with('error', lang('vouchers.error.unknown'));
+                }
 
                 foreach ($result as $item) {
                     $createTime = $item->create_time;
@@ -66,11 +73,11 @@ class VoucherController extends BaseController
 
                     return redirect('admin/vouchers')->with('voucher', $voucher);
                 }
-            } catch (UniFiException $ignored) {
-            }
 
-            // TODO better error handling?
-            return redirect('admin/vouchers');
+                return redirect('admin/vouchers')->with('error', lang('vouchers.error.unknown'));
+            } catch (UniFiException $ue) {
+                return redirect('admin/vouchers')->with('error', $ue->getMessage());
+            }
         } catch (AuthException $e) {
             return handleAuthException($e);
         }
@@ -91,11 +98,15 @@ class VoucherController extends BaseController
             $id = $this->request->getGet('id');
             helper('unifi');
             try {
-                client()->revoke_voucher($id);
-            } catch (UniFiException $ignored) {
-            }
+                $result = client()->revoke_voucher($id);
+                if ($result === false) {
+                    return redirect('admin/vouchers')->with('error', lang('vouchers.error.unknown'));
+                }
 
-            return redirect('admin/vouchers');
+                return redirect('admin/vouchers');
+            } catch (UniFiException $ue) {
+                return redirect('admin/vouchers')->with('error', $ue->getMessage());
+            }
         } catch (AuthException $e) {
             return handleAuthException($e);
         }

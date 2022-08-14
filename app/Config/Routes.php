@@ -32,7 +32,7 @@ $routes->setAutoRoute(true);
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 $routes->get('/', 'IndexController::index');
-$routes->post('/', 'IndexController::createVoucher');
+$routes->post('/createVoucher', 'IndexController::createVoucher');
 
 $routes->get('/login', 'AuthenticationController::login');
 $routes->post('/login', 'AuthenticationController::handleLogin');

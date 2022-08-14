@@ -12,10 +12,11 @@ return [
         ],
         'button' => 'Erstellen'
     ],
+    'created' => 'Voucher erstellt!',
     'list' => [
         'title' => 'Alle Voucher',
         'code' => "Code",
-        'quota' => "Nutzer",
+        'quota' => "Nutzungen",
         'duration' => 'Dauer',
         'createTime' => "Erstellt am",
         'creator' => "Erstellt von",
@@ -23,5 +24,8 @@ return [
         'delete' => 'Löschen'
     ],
     'confirm' => 'Möchten Sie diesen Voucher wirklich löschen?',
-    'error' => 'Fehler!'
+    'error' => [
+        'title' => 'Fehler!',
+        'unknown' => 'Ein unbekannter Fehler ist aufgetreten.'
+    ]
 ];

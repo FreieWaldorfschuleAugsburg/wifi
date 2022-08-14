@@ -1,6 +1,8 @@
 <div class="row gx-4 mt-3 justify-content-center">
     <div class="col-lg-10">
-        <?= isset($error) ? '<div class="alert alert-danger mb-3"> <i class="fas fa-exclamation-triangle"></i> <b>' . lang('students.error') . '</b> ' . $error . '</div>' : '' ?>
+        <?= !empty(session('student')) ? '<div class="alert alert-success mb-3 text-center"> <i class="fas fa-check-circle fa-5x"></i><br/><h1>'. lang('students.created') . '</h1><h4>' . session('student')->name . '</h4></div>' : '' ?>
+        <?= isset($error) ? '<div class="alert alert-danger mb-3"> <i class="fas fa-exclamation-triangle"></i> <b>' . lang('students.error.title') . '</b> ' . $error . '</div>' : '' ?>
+        <?= !empty(session('error')) ? '<div class="alert alert-danger mb-3"> <i class="fas fa-exclamation-triangle"></i> <b>' . lang('students.error.title') . '</b> ' . session('error') . '</div>' : '' ?>
 
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
