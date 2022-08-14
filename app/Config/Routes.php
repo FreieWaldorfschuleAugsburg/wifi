@@ -38,8 +38,12 @@ $routes->get('/login', 'AuthenticationController::login');
 $routes->post('/login', 'AuthenticationController::handleLogin');
 $routes->get('/logout', 'AuthenticationController::logout');
 
-$routes->get('/admin/vouchers', 'VoucherListController::index');
-$routes->get('/admin/students', 'StudentListController::index');
+$routes->get('/admin/vouchers', 'VoucherController::index');
+$routes->post('/admin/vouchers/create', 'VoucherController::create');
+$routes->get('/admin/vouchers/delete', 'VoucherController::delete');
+
+$routes->get('/admin/students', 'StudentController::index');
+$routes->post('/admin/students/create', 'StudentController::create');
 
 /*
  * --------------------------------------------------------------------
