@@ -46,7 +46,7 @@ class StudentController extends BaseController
         }
     }
 
-    public function create(): RedirectResponse
+    public function create(): string|RedirectResponse
     {
         helper('auth');
 
@@ -70,6 +70,10 @@ class StudentController extends BaseController
                 $result = client()->create_radius_account($name, $password);
                 if ($result === false) {
                     return redirect('admin/students')->with('error', lang('students.error.unknown'));
+                }
+
+                if ($print) {
+                    return $this->render('StudentPrintView', ['student' => $result[0]], false);
                 }
 
                 return redirect('admin/students')->with('student', $result[0]);
