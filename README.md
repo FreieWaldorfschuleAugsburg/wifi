@@ -21,8 +21,4 @@ With this library the system provides mainly two functions.
 
 ### ToDo
 
-- Ability to print student hotspot credentials immediately after creation or later at any time (WPA2-Enterprise
-  QR-codes?)
-- Kicking clients when deleting their RADIUS account (somehow not done automatically by UniFi)
-- Restrict non-admins to have only **one** active voucher at a time
-- Ability to see own voucher(s) on main-page
+- Restrict non-admins to have only **one** active voucher at a time (not sure if necessary)

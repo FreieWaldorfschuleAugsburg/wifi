@@ -85,7 +85,7 @@ class StudentController extends BaseController
         }
     }
 
-    public function delete(): RedirectResponse
+    public function delete(): string|RedirectResponse
     {
         helper('auth');
 
@@ -104,12 +104,47 @@ class StudentController extends BaseController
 
             helper('unifi');
             try {
+                $students = client()->list_radius_accounts();
+                if ($students === false) {
+                    return $this->render('StudentView', ['students' => [], 'error' => lang('students.error.unknown')]);
+                }
+
                 $result = client()->delete_radius_account($id);
                 if ($result === false) {
                     return redirect('admin/students')->with('error', lang('students.error.unknown'));
                 }
 
-                return redirect('admin/students');
+                $candidate = null;
+                foreach ($students as $student) {
+                    if ($student->_id === $id) {
+                        $candidate = $student;
+                        break;
+                    }
+                }
+
+                if ($candidate == null) {
+                    return redirect('admin/students')->with('error', lang('students.error.deleted'));
+                }
+
+                $clients = client()->list_clients();
+                $successfulDisconnectedClients = 0;
+                $unsuccessfulDisconnectedClients = 0;
+                foreach ($clients as $client) {
+                    if (property_exists($client, '1x_identity') && $client->{'1x_identity'} === $candidate->name) {
+                        if (client()->block_sta($client->mac) && client()->unblock_sta($client->mac)) {
+                            $successfulDisconnectedClients++;
+                        } else {
+                            $unsuccessfulDisconnectedClients++;
+                        }
+                    }
+                }
+
+                if ($unsuccessfulDisconnectedClients > 0) {
+                    return redirect('admin/students')->with('info', sprintf(lang('students.error.disconnected'),
+                        $successfulDisconnectedClients, $unsuccessfulDisconnectedClients));
+                } else {
+                    return redirect('admin/students')->with('info', sprintf(lang('students.info.disconnected'), $successfulDisconnectedClients));
+                }
             } catch (UniFiException $ue) {
                 return redirect('admin/students')->with('error', $ue->getMessage());
             }

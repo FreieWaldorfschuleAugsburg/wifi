@@ -16,8 +16,23 @@ class IndexController extends BaseController
         helper('auth');
 
         try {
-            if (isLoggedIn()) {
-                return $this->render('IndexView');
+            $user = user();
+
+            if (!is_null($user)) {
+                helper('unifi');
+                try {
+                    $vouchers = client()->stat_voucher();
+
+                    foreach ($vouchers as $key => $value) {
+                        if (isset($value->note) && $value->note !== $user->username) {
+                            unset($vouchers[$key]);
+                        }
+                    }
+
+                    return $this->render('IndexView', ['vouchers' => $vouchers]);
+                } catch (UniFiException $ue) {
+                    return redirect('/')->with('error', $ue->getMessage());
+                }
             }
         } catch (AuthException $e) {
             return handleAuthException($e);

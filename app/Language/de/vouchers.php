@@ -26,6 +26,7 @@ return [
     'confirm' => 'Möchten Sie diesen Voucher wirklich löschen?',
     'error' => [
         'title' => 'Fehler!',
-        'unknown' => 'Ein unbekannter Fehler ist aufgetreten.'
+        'unknown' => 'Ein unbekannter Fehler ist aufgetreten.',
+        'disallowed' => 'Dieser Voucher wurde von einem anderen Nutzer erstellt!'
     ]
 ];

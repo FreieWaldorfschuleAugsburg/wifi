@@ -20,7 +20,12 @@ return [
     'error' => [
         'title' => 'Fehler!',
         'unknown' => 'Ein unbekannter Fehler ist aufgetreten.',
-        'deleted' => 'Der Zugang wurde bereits gelöscht.'
+        'deleted' => 'Der Zugang wurde bereits gelöscht.',
+        'disconnected' => '%s Client(s) wurden erfolgreich getrennt! %s Client(s) konnten jedoch nicht getrennt werden.'
+    ],
+    'info' => [
+        'title' => 'Info!',
+        'disconnected' => '%s Client(s) wurden erfolgreich getrennt!'
     ],
     'print' => [
         'subtitle' => 'Schülerzugangsdaten',

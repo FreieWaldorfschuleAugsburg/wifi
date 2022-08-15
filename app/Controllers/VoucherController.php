@@ -87,25 +87,37 @@ class VoucherController extends BaseController
     {
         helper('auth');
         try {
-            if (!isLoggedIn()) {
+            $user = user();
+            if (is_null($user)) {
                 return redirect('login');
             }
 
-            if (!isAdmin()) {
-                return redirect('/');
-            }
-
             $id = $this->request->getGet('id');
+            $returnUrl = $this->request->getGet('returnUrl');
+
             helper('unifi');
             try {
-                $result = client()->revoke_voucher($id);
-                if ($result === false) {
-                    return redirect('admin/vouchers')->with('error', lang('vouchers.error.unknown'));
+                $vouchers = client()->stat_voucher();
+                if ($vouchers === false) {
+                    return redirect($returnUrl)->with('error', lang('vouchers.error.unknown'));
                 }
 
-                return redirect('admin/vouchers');
+                if (!$user->admin) {
+                    foreach ($vouchers as $voucher) {
+                        if ($voucher->_id === $id && (!isset($voucher->note) || ($voucher->note !== $user->username))) {
+                            return redirect($returnUrl)->with('error', lang('vouchers.error.disallowed'));
+                        }
+                    }
+                }
+
+                $result = client()->revoke_voucher($id);
+                if ($result === false) {
+                    return redirect($returnUrl)->with('error', lang('vouchers.error.unknown'));
+                }
+
+                return redirect($returnUrl);
             } catch (UniFiException $ue) {
-                return redirect('admin/vouchers')->with('error', $ue->getMessage());
+                return redirect($returnUrl)->with('error', $ue->getMessage());
             }
         } catch (AuthException $e) {
             return handleAuthException($e);

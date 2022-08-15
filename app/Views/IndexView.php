@@ -6,6 +6,7 @@
         </div>
 
         <?= !empty(session('voucher')) ? '<div class="alert alert-success mb-3 text-center"> <i class="fas fa-check-circle fa-5x"></i><br/><h1>' . lang('index.voucher.created') . '</h1><h4>' . session('voucher')->code . '</h4></div>' : '' ?>
+        <?= isset($error) ? '<div class="alert alert-danger mb-3"> <i class="fas fa-exclamation-triangle"></i> <b>' . lang('index.error') . '</b> ' . $error . '</div>' : '' ?>
         <?= !empty(session('error')) ? '<div class="alert alert-danger mb-3"> <i class="fas fa-exclamation-triangle"></i> <b>' . lang('index.error') . '</b> ' . session('error') . '</div>' : '' ?>
 
         <div class="card">
@@ -49,6 +50,44 @@
     </div>
 </div>
 
+<div class="row gx-4 mt-3 justify-content-center">
+    <div class="col-lg-10">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="fas fa-ticket"></i> <?= lang('index.vouchers.title') ?>
+                </div>
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col"><?= lang('vouchers.list.code') ?></th>
+                        <th scope="col"><?= lang('vouchers.list.quota') ?></th>
+                        <th scope="col"><?= lang('vouchers.list.duration') ?></th>
+                        <th scope="col"><?= lang('vouchers.list.createTime') ?></th>
+                        <th scope="col"><?= lang('vouchers.list.actions') ?></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php
+                    foreach ($vouchers as $voucher) {
+                        echo '<tr>';
+                        echo '<td onclick="toggleBlur(this)" style="color: transparent; text-shadow: 0 0 10px rgba(0,0,0,0.5); cursor: pointer">' . $voucher->code . '</td>';
+                        echo '<td>' . $voucher->quota . '</td>';
+                        echo '<td>' . $voucher->duration . 'm</td>';
+                        echo '<td>' . date("d.m.Y H:i", $voucher->create_time) . '</td>';
+                        echo '<td><a class="btn btn-danger btn-sm" href="javascript:confirmRedirect(\'' . base_url('admin/vouchers/delete') . '?id=' . $voucher->_id . '&returnUrl=/\')"><i class="fas fa-trash"></i> ' . lang('vouchers.list.delete') . '</a></td>';
+                        echo '</tr>';
+                    }
+                    ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const elements = document.querySelectorAll('input[type=range]');
@@ -61,5 +100,15 @@
         const bar = document.getElementById(element.id + 'Bar');
         bar.textContent = element.value + ' ' + element.alt;
         bar.style.width = ((element.value / element.max) * 100) + '%';
+    }
+
+    function confirmRedirect(url) {
+        if (confirm('<?= lang('vouchers.confirm') ?>')) {
+            window.location.href = url;
+        }
+    }
+
+    function toggleBlur(element) {
+        element.style.color = (element.style.color === 'transparent' ? 'black' : 'transparent');
     }
 </script>

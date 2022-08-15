@@ -50,7 +50,7 @@
                     <i class="fas fa-ticket"></i> <?= lang('vouchers.list.title') ?>
                 </div>
             </div>
-            <div class="card-body">
+            <div class="card-body table-responsive">
                 <table class="table">
                     <thead>
                     <tr>
@@ -71,7 +71,7 @@
                         echo '<td>' . $voucher->duration . 'm</td>';
                         echo '<td>' . date("d.m.Y H:i", $voucher->create_time) . '</td>';
                         echo '<td>' . $voucher->note . '</td>';
-                        echo '<td><a class="btn btn-danger btn-sm" href="javascript:confirmRedirect(\'' . base_url('admin/vouchers/delete') . '?id=' . $voucher->_id . '\')"><i class="fas fa-trash"></i> ' . lang('vouchers.list.delete') . '</a></td>';
+                        echo '<td><a class="btn btn-danger btn-sm" href="javascript:confirmRedirect(\'' . base_url('admin/vouchers/delete') . '?id=' . $voucher->_id . '&returnUrl=admin/vouchers\')"><i class="fas fa-trash"></i> ' . lang('vouchers.list.delete') . '</a></td>';
                         echo '</tr>';
                     }
                     ?>
