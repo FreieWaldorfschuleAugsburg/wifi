@@ -46,7 +46,7 @@ class StudentController extends BaseController
         }
     }
 
-    public function create(): string|RedirectResponse
+    public function create(): RedirectResponse
     {
         helper('auth');
 
@@ -73,6 +73,78 @@ class StudentController extends BaseController
                 }
 
                 return redirect('admin/students')->with('student', $result[0]);
+            } catch (UniFiException $ue) {
+                return redirect('admin/students')->with('error', $ue->getMessage());
+            }
+        } catch (AuthException $e) {
+            return handleAuthException($e);
+        }
+    }
+
+    public function delete(): RedirectResponse
+    {
+        helper('auth');
+
+        try {
+            $user = user();
+
+            if (is_null($user)) {
+                return redirect('login');
+            }
+
+            if (!$user->admin) {
+                return redirect('/');
+            }
+
+            $id = $this->request->getGet('id');
+
+            helper('unifi');
+            try {
+                $result = client()->delete_radius_account($id);
+                if ($result === false) {
+                    return redirect('admin/students')->with('error', lang('students.error.unknown'));
+                }
+
+                return redirect('admin/students');
+            } catch (UniFiException $ue) {
+                return redirect('admin/students')->with('error', $ue->getMessage());
+            }
+        } catch (AuthException $e) {
+            return handleAuthException($e);
+        }
+    }
+
+    public function print(): string|RedirectResponse
+    {
+        helper('auth');
+
+        try {
+            $user = user();
+
+            if (is_null($user)) {
+                return redirect('login');
+            }
+
+            if (!$user->admin) {
+                return redirect('/');
+            }
+
+            $id = $this->request->getGet('id');
+
+            helper('unifi');
+            try {
+                $students = client()->list_radius_accounts();
+                if ($students === false) {
+                    return $this->render('StudentView', ['students' => [], 'error' => lang('students.error.unknown')]);
+                }
+
+                foreach ($students as $student) {
+                    if ($student->_id === $id) {
+                        return $this->render('StudentPrintView', ['student' => $student], false);
+                    }
+                }
+
+                return redirect('admin/students')->with('error', lang('students.error.deleted'));
             } catch (UniFiException $ue) {
                 return redirect('admin/students')->with('error', $ue->getMessage());
             }

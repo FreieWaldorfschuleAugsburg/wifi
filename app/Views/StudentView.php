@@ -59,7 +59,7 @@
                         echo '<td>' . $student->name . '</td>';
                         echo '<td onclick="toggleBlur(this)" style="color: transparent; text-shadow: 0 0 10px rgba(0,0,0,0.5); cursor: pointer">' . $student->x_password . '</td>';
                         echo '<td><a class="btn btn-danger btn-sm" href="javascript:confirmRedirect(\'' . base_url('admin/students/delete') . '?id=' . $student->_id . '\')"><i class="fas fa-trash"></i> ' . lang('students.list.delete') . '</a>&nbsp;';
-                        echo '<a class="btn btn-primary btn-sm" href="' . base_url('admin/students/print') . '?ident=' . $student->_id . '"><i class="fas fa-print"></i> ' . lang('students.list.print') . '</button></td>';
+                        echo '<a class="btn btn-primary btn-sm" href="' . base_url('admin/students/print') . '?id=' . $student->_id . '"><i class="fas fa-print"></i> ' . lang('students.list.print') . '</button></td>';
                         echo '</tr>';
                     }
                     ?>
