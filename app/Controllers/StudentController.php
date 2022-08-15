@@ -62,7 +62,7 @@ class StudentController extends BaseController
             }
 
             $name = str_replace(' ', '', ucwords($this->request->getPost('name'), ' '));
-            $password = bin2hex(openssl_random_pseudo_bytes(4));
+            $password = bin2hex(openssl_random_pseudo_bytes(getenv('students.passwordLength') / 2));
             $print = $this->request->getPost('print');
 
             helper('unifi');

@@ -21,7 +21,7 @@
                         <div class="progress" style="height: 30px; font-size: 15px">
                             <div id="quotaBar" class="progress-bar" role="progressbar"></div>
                         </div>
-                        <input type="range" min="1" max="40" step="1" value="10" class="form-range"
+                        <input type="range" min="1" max="<?= getenv('voucher.maxQuota') ?>" step="1" value="<?= getenv('voucher.defaultQuota') ?>" class="form-range"
                                name="quota"
                                id="quota"
                                alt="<?= lang('index.voucher.quota.unit') ?>"
@@ -34,7 +34,7 @@
                         <div class="progress" style="height: 30px; font-size: 15px">
                             <div id="durationBar" class="progress-bar" role="progressbar"></div>
                         </div>
-                        <input type="range" min="1" max="180" step="1" value="45" class="form-range"
+                        <input type="range" min="1" max="<?= getenv('voucher.maxDuration') ?>" step="1" value="<?= getenv('voucher.defaultDuration') ?>" class="form-range"
                                name="duration"
                                id="duration"
                                alt="<?= lang('index.voucher.duration.unit') ?>"
