@@ -66,7 +66,7 @@
                     <?php
                     foreach ($vouchers as $voucher) {
                         echo '<tr>';
-                        echo '<td>' . $voucher->code . '</td>';
+                        echo '<td onmouseenter="blurText(this, false)" onmouseleave="blurText(this, true)" style="color: transparent; text-shadow: 0 0 10px rgba(0,0,0,0.5);">' . $voucher->code . '</td>';
                         echo '<td>' . $voucher->quota . '</td>';
                         echo '<td>' . $voucher->duration . 'm</td>';
                         echo '<td>' . date("d.m.Y H:i", $voucher->create_time) . '</td>';
@@ -87,5 +87,9 @@
         if (confirm('<?= lang('vouchers.confirm') ?>')) {
             window.location.href = url;
         }
+    }
+
+    function blurText(element, blur) {
+        element.style.color = (blur ? 'transparent' : 'black');
     }
 </script>

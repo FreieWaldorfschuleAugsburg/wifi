@@ -22,7 +22,8 @@
                         <div class="progress" style="height: 30px; font-size: 15px">
                             <div id="quotaBar" class="progress-bar" role="progressbar"></div>
                         </div>
-                        <input type="range" min="1" max="<?= getenv('voucher.maxQuota') ?>" step="1" value="<?= getenv('voucher.defaultQuota') ?>" class="form-range"
+                        <input type="range" min="1" max="<?= getenv('voucher.maxQuota') ?>" step="1"
+                               value="<?= getenv('voucher.defaultQuota') ?>" class="form-range"
                                name="quota"
                                id="quota"
                                alt="<?= lang('index.voucher.quota.unit') ?>"
@@ -35,7 +36,8 @@
                         <div class="progress" style="height: 30px; font-size: 15px">
                             <div id="durationBar" class="progress-bar" role="progressbar"></div>
                         </div>
-                        <input type="range" min="1" max="<?= getenv('voucher.maxDuration') ?>" step="1" value="<?= getenv('voucher.defaultDuration') ?>" class="form-range"
+                        <input type="range" min="1" max="<?= getenv('voucher.maxDuration') ?>" step="1"
+                               value="<?= getenv('voucher.defaultDuration') ?>" class="form-range"
                                name="duration"
                                id="duration"
                                alt="<?= lang('index.voucher.duration.unit') ?>"
@@ -73,7 +75,7 @@
                     <?php
                     foreach ($vouchers as $voucher) {
                         echo '<tr>';
-                        echo '<td onclick="toggleBlur(this)" style="color: transparent; text-shadow: 0 0 10px rgba(0,0,0,0.5); cursor: pointer">' . $voucher->code . '</td>';
+                        echo '<td onmouseenter="blurText(this, false)" onmouseleave="blurText(this, true)" style="color: transparent; text-shadow: 0 0 10px rgba(0,0,0,0.5);">' . $voucher->code . '</td>';
                         echo '<td>' . $voucher->quota . '</td>';
                         echo '<td>' . $voucher->duration . 'm</td>';
                         echo '<td>' . date("d.m.Y H:i", $voucher->create_time) . '</td>';
@@ -108,7 +110,7 @@
         }
     }
 
-    function toggleBlur(element) {
-        element.style.color = (element.style.color === 'transparent' ? 'black' : 'transparent');
+    function blurText(element, blur) {
+        element.style.color = (blur ? 'transparent' : 'black');
     }
 </script>

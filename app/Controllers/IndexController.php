@@ -6,7 +6,6 @@ use App\Models\AuthException;
 use App\Models\UniFiException;
 use CodeIgniter\HTTP\RedirectResponse;
 use function App\Helpers\handleAuthException;
-use function App\Helpers\isLoggedIn;
 use function App\Helpers\user;
 
 class IndexController extends BaseController

@@ -1,6 +1,6 @@
 <div class="row gx-4 mt-3 justify-content-center">
     <div class="col-lg-10">
-        <?= !empty(session('student')) ? '<div class="alert alert-success mb-3 text-center"> <i class="fas fa-check-circle fa-5x"></i><br/><h1>'. lang('students.created') . '</h1><h4>' . session('student')->name . '</h4></div>' : '' ?>
+        <?= !empty(session('student')) ? '<div class="alert alert-success mb-3 text-center"> <i class="fas fa-check-circle fa-5x"></i><br/><h1>' . lang('students.created') . '</h1><h4>' . session('student')->name . '</h4></div>' : '' ?>
         <?= isset($error) ? '<div class="alert alert-danger mb-3"> <i class="fas fa-exclamation-triangle"></i> <b>' . lang('students.error.title') . '</b> ' . $error . '</div>' : '' ?>
         <?= !empty(session('error')) ? '<div class="alert alert-danger mb-3"> <i class="fas fa-exclamation-triangle"></i> <b>' . lang('students.error.title') . '</b> ' . session('error') . '</div>' : '' ?>
         <?= !empty(session('info')) ? '<div class="alert alert-info mb-3"> <i class="fas fa-circle-info"></i> <b>' . lang('students.info.title') . '</b> ' . session('info') . '</div>' : '' ?>
@@ -59,7 +59,7 @@
                     foreach ($students as $student) {
                         echo '<tr>';
                         echo '<td>' . $student->name . '</td>';
-                        echo '<td onclick="toggleBlur(this)" style="color: transparent; text-shadow: 0 0 10px rgba(0,0,0,0.5); cursor: pointer">' . $student->x_password . '</td>';
+                        echo '<td onmouseenter="blurText(this, false)" onmouseleave="blurText(this, true)" style="color: transparent; text-shadow: 0 0 10px rgba(0,0,0,0.5);">' . $student->x_password . '</td>';
                         echo '<td><a class="btn btn-danger btn-sm" href="javascript:confirmRedirect(\'' . base_url('admin/students/delete') . '?id=' . $student->_id . '\')"><i class="fas fa-trash"></i> ' . lang('students.list.delete') . '</a>&nbsp;';
                         echo '<a class="btn btn-primary btn-sm" href="' . base_url('admin/students/print') . '?id=' . $student->_id . '"><i class="fas fa-print"></i> ' . lang('students.list.print') . '</button></td>';
                         echo '</tr>';
@@ -79,7 +79,7 @@
         }
     }
 
-    function toggleBlur(element) {
-        element.style.color = (element.style.color === 'transparent' ? 'black' : 'transparent');
+    function blurText(element, blur) {
+        element.style.color = (blur ? 'transparent' : 'black');
     }
 </script>
