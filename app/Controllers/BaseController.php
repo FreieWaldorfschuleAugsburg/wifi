@@ -3,16 +3,12 @@
 namespace App\Controllers;
 
 use App\Models\AuthException;
-use App\Models\UserModel;
 use CodeIgniter\Controller;
 use CodeIgniter\HTTP\CLIRequest;
 use CodeIgniter\HTTP\IncomingRequest;
-use CodeIgniter\HTTP\RedirectResponse;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Psr\Log\LoggerInterface;
-use function App\Helpers\isAdmin;
-use function App\Helpers\isLoggedIn;
 use function App\Helpers\user;
 
 class BaseController extends Controller

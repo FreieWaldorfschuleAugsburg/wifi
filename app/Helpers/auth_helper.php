@@ -21,7 +21,7 @@ function isLoggedIn(): bool
 function isAdmin(): bool
 {
     $user = user();
-    if (!$user)
+    if (is_null($user))
         return false;
 
     return $user->admin;
@@ -49,7 +49,7 @@ function user(): ?UserModel
 {
     $userName = session('USER');
     if (!$userName) {
-        throw new AuthException();
+        return null;
     }
 
     $connection = createAdminConnection();
@@ -59,7 +59,7 @@ function user(): ?UserModel
 /**
  * @throws AuthException
  */
-function createUserModel(Connection $ldap, string $username): ?UserModel
+function createUserModel(Connection $ldap, string $username): UserModel
 {
     $domain = getenv('ad.domain');
     $result = @ldap_search($ldap, "dc=$domain,dc=local", "(sAMAccountName=$username)");
@@ -108,7 +108,7 @@ function createUserModel(Connection $ldap, string $username): ?UserModel
 /**
  * @throws AuthException
  */
-function createAdminConnection(): ?Connection
+function createAdminConnection(): Connection
 {
     return createConnection(getenv('ad.admin.username'), getenv('ad.admin.password'));
 }
@@ -116,7 +116,7 @@ function createAdminConnection(): ?Connection
 /**
  * @throws AuthException
  */
-function createConnection(string $username, string $password): ?Connection
+function createConnection(string $username, string $password): Connection
 {
     $ldap = @ldap_connect(getenv('ad.ldap'));
     if (!$ldap)

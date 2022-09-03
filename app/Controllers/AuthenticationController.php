@@ -23,7 +23,7 @@ class AuthenticationController extends BaseController
                 return redirect('/');
             }
         } catch (AuthException $e) {
-            // Ignoring the exception, because handling it would cause infinite loop
+            return handleAuthException($e);
         }
 
         // This will never throw an exception since we're not rendering the navbar
