@@ -1,6 +1,6 @@
 <div class="container px-4">
     <div class="row justify-content-center mt-3">
-        <div class="col-lg-8">
+        <div class="col-lg-12">
             <h1 class="text-center"><?= lang('app.name') ?></h1>
             <h5 class="text-center mb-5"><?= lang('students.print.subtitle') ?></h5>
 
@@ -30,7 +30,7 @@
         </div>
     </div>
     <div class="row justify-content-center mt-4">
-        <div class="col-lg-8">
+        <div class="col-lg-12">
             <div class="card">
                 <div class="card-header">
                     <i class="fas fa-tasks"></i> <b><?= lang('students.print.manual.title') ?></b>
@@ -42,7 +42,7 @@
         </div>
     </div>
     <div class="row justify-content-center mt-4">
-        <div class="col-lg-8">
+        <div class="col-lg-12">
             <div class="card">
                 <div class="card-header">
                     <i class="fas fa-section"></i> <b><?= lang('students.print.terms.title') ?></b>

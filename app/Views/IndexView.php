@@ -1,5 +1,5 @@
-<div class="row gx-4 mt-3 justify-content-center">
-    <div class="col-lg-10">
+<div class="row mt-3 justify-content-center">
+    <div class="col-lg-12">
         <div class="alert alert-warning mb-3">
             <h5><?= lang('index.disclaimer.title') ?></h5>
             <?= lang('index.disclaimer.text') ?>
@@ -52,8 +52,8 @@
     </div>
 </div>
 
-<div class="row gx-4 mt-3 justify-content-center">
-    <div class="col-lg-10">
+<div class="row mt-3 justify-content-center">
+    <div class="col-lg-12">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <div>
