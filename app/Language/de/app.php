@@ -2,7 +2,7 @@
 
 return [
     'name' => 'WiFi-System',
-    'copyright' => '&copy; 2022 Freie Waldorfschule Augsburg<br><small>Entwickelt von <a href="https://elektronisch.dev" target="_blank">Linus Groschke</a></small>',
+    'copyright' => '&copy; 2022 Freie Waldorfschule Augsburg<br><small>Entwickelt von <a href="https://elektronisch.dev" target="_blank">Linus Groschke</a> – <a href="https://github.com/FreieWaldorfschuleAugsburg/wifi" target="_blank">Quellcode auf GitHub</a> – <a href="https://waldorf-augsburg.de/impressum" target="_blank">Impressum</a></small></small>',
     'error' => [
         'exception' => [
             'title' => 'Systemfehler!',
