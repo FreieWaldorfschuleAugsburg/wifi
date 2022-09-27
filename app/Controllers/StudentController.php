@@ -227,7 +227,8 @@ class StudentController extends BaseController
     public function cron(): void
     {
         if (getenv('students.cronIP') !== $_SERVER['REMOTE_ADDR']) {
-            $this->response->setStatusCode(400, 'No Remote Access Allowed');
+            echo 'No remote access allowed! (' . $_SERVER['REMOTE_ADDR'] . ')';
+            $this->response->setStatusCode(400);
             return;
         }
 
@@ -235,6 +236,8 @@ class StudentController extends BaseController
         try {
             $students = client()->list_radius_accounts();
             $clients = client()->list_clients();
+
+            $start = floor(microtime(true) * 1000);
 
             foreach ($clients as $client) {
                 if (property_exists($client, '1x_identity')) {
@@ -262,6 +265,7 @@ class StudentController extends BaseController
                 }
             }
 
+            echo 'Done! (' . floor(microtime(true) * 1000) - $start . 'ms)<br>';
         } catch (UniFiException $ue) {
             echo $ue->getTraceAsString();
         }
