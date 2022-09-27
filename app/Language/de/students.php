@@ -10,8 +10,10 @@ return [
     'created' => 'Zugang angelegt!',
     'list' => [
         'title' => 'Alle Schüler*innen',
-        'username' => "Benutzername",
-        'password' => "Passwort",
+        'username' => 'Benutzername',
+        'password' => 'Passwort',
+        'clients' => 'Geräte',
+        'connectedClients' => 'davon verbunden',
         'actions' => 'Aktionen',
         'delete' => "Löschen",
         'print' => 'Drucken'
@@ -21,7 +23,8 @@ return [
         'title' => 'Fehler!',
         'unknown' => 'Ein unbekannter Fehler ist aufgetreten.',
         'deleted' => 'Der Zugang wurde bereits gelöscht.',
-        'disconnected' => '%s Client(s) wurden erfolgreich getrennt! %s Client(s) konnten jedoch nicht getrennt werden.'
+        'disconnected' => '%s Client(s) wurden erfolgreich getrennt! %s Client(s) konnten jedoch nicht getrennt werden.',
+        'alreadyExistent' => 'Diese/r Schüler/in existiert bereits.'
     ],
     'info' => [
         'title' => 'Info!',

@@ -30,6 +30,8 @@ voucher.defaultDuration = 45
 
 # Please use multiples of two only
 students.passwordLength = 8
+students.cronIP = 0.0.0.0
+students.clientPrefix = 'STUDENT_'
 
 #--------------------------------------------------------------------
 # ACTIVE DIRECTORY

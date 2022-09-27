@@ -32,11 +32,35 @@ class StudentController extends BaseController
                     return $this->render('StudentView', ['students' => [], 'error' => lang('students.error.unknown')]);
                 }
 
+                $allClients = client()->stat_allusers();
+                $onlineClients = client()->list_clients();
                 foreach ($students as $key => $value) {
                     if (isset($value->tunnel_type) || isset($value->tunnel_medium_type)) {
                         unset($students[$key]);
+                        continue;
+                    }
+
+                    $value->clients = 0;
+                    foreach ($allClients as $client) {
+                        if (property_exists($client, 'name') && $client->name === getenv('students.clientPrefix') . $value->name) {
+                            $value->clients++;
+                        }
+                    }
+
+                    $value->connectedClients = 0;
+                    if ($value->clients) {
+                        // Count the amount of clients using this identity
+                        foreach ($onlineClients as $client) {
+                            if (property_exists($client, '1x_identity') && $client->{'1x_identity'} === $value->name) {
+                                $value->connectedClients++;
+                            }
+                        }
                     }
                 }
+
+                // Sort DESC by amount of connected clients
+                usort($students, fn($a, $b) => $b->connectedClients - $a->connectedClients);
+
                 return $this->render('StudentView', ['students' => $students]);
             } catch (UniFiException $ue) {
                 return $this->render('StudentView', ['students' => [], 'error' => $ue->getMessage()]);
@@ -67,6 +91,13 @@ class StudentController extends BaseController
 
             helper('unifi');
             try {
+                $students = client()->list_radius_accounts();
+                foreach ($students as $student) {
+                    if ($student->name === $name) {
+                        return redirect('admin/students')->with('error', lang('students.error.alreadyExistent'));
+                    }
+                }
+
                 $result = client()->create_radius_account($name, $password);
                 if ($result === false) {
                     return redirect('admin/students')->with('error', lang('students.error.unknown'));
@@ -126,6 +157,7 @@ class StudentController extends BaseController
                     return redirect('admin/students')->with('error', lang('students.error.deleted'));
                 }
 
+                // Kick client from network by blocking and un-blocking client
                 $clients = client()->list_clients();
                 $successfulDisconnectedClients = 0;
                 $unsuccessfulDisconnectedClients = 0;
@@ -189,6 +221,49 @@ class StudentController extends BaseController
             }
         } catch (AuthException $e) {
             return handleAuthException($e);
+        }
+    }
+
+    public function cron(): void
+    {
+        if (getenv('students.cronIP') !== $_SERVER['REMOTE_ADDR']) {
+            $this->response->setStatusCode(400, 'No Remote Access Allowed');
+            return;
+        }
+
+        helper('unifi');
+        try {
+            $students = client()->list_radius_accounts();
+            $clients = client()->list_clients();
+
+            foreach ($clients as $client) {
+                if (property_exists($client, '1x_identity')) {
+                    $identity = $client->{'1x_identity'};
+
+                    $found = false;
+                    foreach ($students as $student) {
+                        if ($student->name === $identity) {
+                            $found = true;
+
+                            $clientName = getenv('students.clientPrefix') . $identity;
+                            if (!property_exists($client, 'name') || $client->name !== $clientName) {
+                                client()->edit_client_name($client->_id, $clientName);
+                                echo 'Renamed "' . $client->mac . '" to "' . $clientName . '"<br>';
+                            }
+                        }
+                    }
+
+                    if (!$found) {
+                        client()->block_sta($client->mac);
+                        client()->unblock_sta($client->mac);
+
+                        echo 'Kicked "' . $client->mac . '" due to invalid identity "' . $identity . '"<br>';
+                    }
+                }
+            }
+
+        } catch (UniFiException $ue) {
+            echo $ue->getTraceAsString();
         }
     }
 }
