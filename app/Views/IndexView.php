@@ -1,10 +1,5 @@
 <div class="row mt-3 justify-content-center">
     <div class="col-lg-12">
-        <div class="alert alert-warning mb-3">
-            <h5><?= lang('index.disclaimer.title') ?></h5>
-            <?= lang('index.disclaimer.text') ?>
-        </div>
-
         <?= !empty(session('voucher')) ? '<div class="alert alert-success mb-3 text-center"> <i class="fas fa-check-circle fa-5x"></i><br/><h1>' . lang('index.voucher.created') . '</h1><h4>' . session('voucher')->code . '</h4></div>' : '' ?>
         <?= isset($error) ? '<div class="alert alert-danger mb-3"> <i class="fas fa-exclamation-triangle"></i> <b>' . lang('index.error') . '</b> ' . $error . '</div>' : '' ?>
         <?= !empty(session('error')) ? '<div class="alert alert-danger mb-3"> <i class="fas fa-exclamation-triangle"></i> <b>' . lang('index.error') . '</b> ' . session('error') . '</div>' : '' ?>
