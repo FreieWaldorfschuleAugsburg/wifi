@@ -58,6 +58,9 @@ class StudentController extends BaseController
                     }
                 }
 
+                // Sort DESC by amount of overall clients
+                usort($students, fn($a, $b) => $b->clients - $a->clients);
+
                 // Sort DESC by amount of connected clients
                 usort($students, fn($a, $b) => $b->connectedClients - $a->connectedClients);
 
