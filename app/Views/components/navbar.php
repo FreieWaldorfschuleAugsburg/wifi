@@ -2,7 +2,7 @@
     <div class="container">
         <a class="navbar-brand" href="<?= base_url('/') ?>">
             <img src="<?= base_url('/') ?>/assets/img/logo.png" width="30" height="30" class="d-inline-block align-top" alt="">
-            <?= lang('app.name') ?>
+            <?= lang('app.name.full') ?>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMobileToggle"
                 aria-controls="navbarMobileToggle" aria-expanded="false" aria-label="Toggle navigation">
