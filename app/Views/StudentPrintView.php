@@ -1,7 +1,7 @@
 <div class="container px-4">
     <div class="row justify-content-center mt-3">
         <div class="col-lg-12">
-            <h1 class="text-center"><?= lang('app.name') ?></h1>
+            <h1 class="text-center"><?= lang('app.name.short') ?></h1>
             <h5 class="text-center mb-5"><?= lang('students.print.subtitle') ?></h5>
 
             <div class="card">

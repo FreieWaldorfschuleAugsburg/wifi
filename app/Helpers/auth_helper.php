@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Enums\UserRole;
 use App\Models\AuthException;
 use App\Models\UserModel;
 use CodeIgniter\HTTP\RedirectResponse;
@@ -24,7 +25,7 @@ function isAdmin(): bool
     if (is_null($user))
         return false;
 
-    return $user->admin;
+    return $user->isAdmin();
 }
 
 /**
@@ -74,35 +75,16 @@ function createUserModel(Connection $ldap, string $username): UserModel
     if (!isset($entries['count']) || $entries['count'] !== 1)
         throw new AuthException('userGone');
 
-    // Beautify data
-    $data = [];
-    foreach ($entries[0] as $key => $value) {
-        if (is_numeric($key)) continue;
-        if ($key === 'count') continue;
-
-        $data[$key] = (array)$value;
-        unset($data[$key]['count']);
-    }
-
-    // Check groups memberships
-    $adminGroup = getenv('ad.adminGroup');
-    $userGroup = getenv('ad.userGroup');
-    $admin = false;
-    $user = false;
-    foreach ($data['memberof'] as $value) {
-        if (str_contains($value, "CN=$adminGroup")) {
-            $admin = true;
-        } else if (str_contains($value, "CN=$userGroup")) {
-            $user = true;
-        }
-    }
+    $data = beautifyEntries($entries);
+    $groups = beautifyGroups($data);
+    $role = determineUserGroup($ldap, $domain, $groups);
 
     // Cancel if user is neither member of the admin nor the user group
-    if (!$admin && !$user) {
-        throw new AuthException('noPermissions');
+    if (is_null($role)) {
+        //throw new AuthException('noPermissions');
     }
 
-    return new UserModel($username, $data['displayname'][0], $admin);
+    return new UserModel($username, $data['displayname'][0], $role);
 }
 
 /**
@@ -132,6 +114,53 @@ function createConnection(string $username, string $password): Connection
         throw new AuthException('invalidCredentials');
 
     return $ldap;
+}
+
+function determineUserGroup(Connection $ldap, string $domain, array $groups): ?UserRole
+{
+    if (!$groups) {
+        return null;
+    }
+
+    foreach (UserRole::cases() as $role) {
+        if (in_array($role->value, $groups, true)) {
+            return $role;
+        }
+    }
+
+    $finalRole = null;
+    foreach ($groups as $group) {
+        $groupResult = @ldap_search($ldap, "dc=$domain,dc=local", "(&(objectCategory=group)(cn=$group))");
+        $groupEntries = @ldap_get_entries($ldap, $groupResult);
+        $data = beautifyEntries($groupEntries);
+        $finalRole = determineUserGroup($ldap, $domain, beautifyGroups($data));
+    }
+
+    return $finalRole;
+}
+
+function beautifyGroups(array $data): array
+{
+    $groups = [];
+    if (array_key_exists('memberof', $data)) {
+        foreach ($data['memberof'] as $entry) {
+            $groups[] = substr(explode(',', $entry)[0], 3);
+        }
+    }
+    return $groups;
+}
+
+function beautifyEntries(array $entries): array
+{
+    $data = [];
+    foreach ($entries[0] as $key => $value) {
+        if (is_numeric($key)) continue;
+        if ($key === 'count') continue;
+
+        $data[$key] = (array)$value;
+        unset($data[$key]['count']);
+    }
+    return $data;
 }
 
 function handleAuthException(AuthException $exception): RedirectResponse

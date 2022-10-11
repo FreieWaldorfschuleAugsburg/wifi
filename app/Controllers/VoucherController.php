@@ -52,7 +52,7 @@ class VoucherController extends BaseController
                 return redirect('login');
             }
 
-            if (!$user->admin) {
+            if (!$user->isAdmin()) {
                 return redirect('/');
             }
 
@@ -102,7 +102,7 @@ class VoucherController extends BaseController
                     return redirect($returnUrl)->with('error', lang('vouchers.error.unknown'));
                 }
 
-                if (!$user->admin) {
+                if (!$user->isAdmin()) {
                     foreach ($vouchers as $voucher) {
                         if ($voucher->_id === $id && (!isset($voucher->note) || ($voucher->note !== $user->username))) {
                             return redirect($returnUrl)->with('error', lang('vouchers.error.disallowed'));

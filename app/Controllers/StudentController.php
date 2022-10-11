@@ -21,7 +21,7 @@ class StudentController extends BaseController
                 return redirect('login');
             }
 
-            if (!$user->admin) {
+            if (!$user->isAdmin()) {
                 return redirect('/');
             }
 
@@ -84,7 +84,7 @@ class StudentController extends BaseController
                 return redirect('login');
             }
 
-            if (!$user->admin) {
+            if (!$user->isAdmin()) {
                 return redirect('/');
             }
 
@@ -130,7 +130,7 @@ class StudentController extends BaseController
                 return redirect('login');
             }
 
-            if (!$user->admin) {
+            if (!$user->isAdmin()) {
                 return redirect('/');
             }
 
@@ -199,7 +199,7 @@ class StudentController extends BaseController
                 return redirect('login');
             }
 
-            if (!$user->admin) {
+            if (!$user->isAdmin()) {
                 return redirect('/');
             }
 
@@ -214,7 +214,7 @@ class StudentController extends BaseController
 
                 foreach ($students as $student) {
                     if ($student->_id === $id) {
-                        return $this->render('StudentPrintView', ['student' => $student], false);
+                        return $this->render('StudentPrintView', ['student' => $student], false, false);
                     }
                 }
 

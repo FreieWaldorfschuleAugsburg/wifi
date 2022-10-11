@@ -40,7 +40,7 @@ class BaseController extends Controller
     /**
      * @throws AuthException
      */
-    public function render($name, $data = null, $renderNavbar = true): string
+    public function render($name, $data = null, $renderNavbar = true, $renderFooter = true): string
     {
         $renderedContent = view('components/header');
 
@@ -55,7 +55,10 @@ class BaseController extends Controller
             $renderedContent .= view($name);
         }
 
-        $renderedContent .= view('components/footer');
+        if ($renderFooter) {
+            $renderedContent .= view('components/footer');
+        }
+
         return $renderedContent;
     }
 }

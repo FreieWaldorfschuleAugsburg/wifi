@@ -41,8 +41,6 @@ ad.ldap = ''
 ad.domain = ''
 ad.admin.username = ''
 ad.admin.password = ''
-ad.adminGroup = ''
-ad.userGroup = ''
 
 #--------------------------------------------------------------------
 # UNIFI

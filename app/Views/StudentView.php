@@ -61,7 +61,7 @@
                     foreach ($students as $student) {
                         echo '<tr>';
                         echo '<td>' . $student->name . '</td>';
-                        echo '<td onmouseenter="blurText(this, false)" onmouseleave="blurText(this, true)" style="color: transparent; text-shadow: 0 0 10px rgba(0,0,0,0.5);">' . $student->x_password . '</td>';
+                        echo '<td onmouseenter="blurText(this, false)" onmouseleave="blurText(this, true)" class="blurred">' . $student->x_password . '</td>';
                         echo '<td>' . $student->clients . '</td>';
                         echo '<td>' . $student->connectedClients . '</td>';
                         echo '<td><a class="btn btn-danger btn-sm" href="javascript:confirmRedirect(\'' . base_url('admin/students/delete') . '?id=' . $student->_id . '\')"><i class="fas fa-trash"></i> ' . lang('students.list.delete') . '</a>&nbsp;';
@@ -84,6 +84,10 @@
     }
 
     function blurText(element, blur) {
-        element.style.color = (blur ? 'transparent' : 'black');
+        if (blur) {
+            element.classList.replace('visible', 'blurred');
+        } else {
+            element.classList.replace('blurred', 'visible');
+        }
     }
 </script>
