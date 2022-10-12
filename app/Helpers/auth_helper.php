@@ -81,7 +81,7 @@ function createUserModel(Connection $ldap, string $username): UserModel
 
     // Cancel if user is neither member of the admin nor the user group
     if (is_null($role)) {
-        //throw new AuthException('noPermissions');
+        throw new AuthException('noPermissions');
     }
 
     return new UserModel($username, $data['displayname'][0], $role);
