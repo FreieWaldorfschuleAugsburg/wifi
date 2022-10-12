@@ -16,5 +16,6 @@ return [
             'title' => 'Nicht gefunden!',
             'text' => 'Die von Ihnen angeforderte Seite konnte nicht gefunden werden.'
         ]
-    ]
+    ],
+    'confirm' => 'Wollen Sie das wirklich tun?'
 ];

@@ -56,21 +56,36 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <?php
-                    foreach ($students as $student) {
-                        echo '<tr>';
-                        echo '<td>' . $student->name . '</td>';
-                        echo '<td onmouseenter="blurText(this, false)" onmouseleave="blurText(this, true)" class="blurred">' . $student->x_password . '</td>';
-                        echo '<td><ul>';
-                        foreach ($student->devices as $key => $value) {
-                            echo '<li>' . $key . ' <span class="badge bg-' . ($value ? 'success' : 'danger') . '">' . lang('students.list.online.' . ($value ? 'true' : 'false')) . '</span></li>';
-                        }
-                        echo '</ul></td>';
-                        echo '<td><a class="btn btn-danger btn-sm" href="javascript:confirmRedirect(\'' . base_url('admin/students/delete') . '?id=' . $student->_id . '\')"><i class="fas fa-trash"></i> ' . lang('students.list.delete') . '</a>&nbsp;';
-                        echo '<a class="btn btn-primary btn-sm" href="' . base_url('admin/students/print') . '?id=' . $student->_id . '"><i class="fas fa-print"></i> ' . lang('students.list.print') . '</button></td>';
-                        echo '</tr>';
-                    }
-                    ?>
+                    <?php foreach ($students as $student) : ?>
+                        <tr>
+                            <td><?= $student->name ?></td>
+                            <td onmouseenter="blurText(this, false)" onmouseleave="blurText(this, true)"
+                                class="blurred"><?= $student->x_password ?></td>
+                            <td>
+                                <ul>
+                                    <?php if ($student->devices) : ?>
+                                        <?php foreach ($student->devices as $key => $value) : ?>
+                                            <li><?= $key ?> <span class="badge bg-<?= $value ? 'success' : 'danger' ?>">
+                                                <?= lang('students.list.online.' . ($value ? 'true' : 'false')) ?></span>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <?= lang('students.list.noDevices') ?>
+                                    <?php endif; ?>
+                                </ul>
+                            </td>
+                            <td>
+                                <button class="btn btn-danger btn-sm mr-2"
+                                        onclick="confirmRedirect('<?= base_url('admin/students/delete') . '?id=' . $student->_id ?>')">
+                                    <i class="fas fa-trash"></i> <?= lang('students.list.delete') ?>
+                                </button>
+                                <a class="btn btn-primary btn-sm mr-2"
+                                   href="<?= base_url('admin/students/print') . '?id=' . $student->_id ?>">
+                                    <i class="fas fa-print"></i> <?= lang('students.list.print') ?>
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
@@ -80,7 +95,7 @@
 
 <script>
     function confirmRedirect(url) {
-        if (confirm('<?= lang('students.confirm') ?>')) {
+        if (confirm('<?= lang('app.confirm') ?>')) {
             window.location.href = url;
         }
     }

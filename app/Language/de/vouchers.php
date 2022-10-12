@@ -23,7 +23,6 @@ return [
         'actions' => 'Aktionen',
         'delete' => 'Löschen'
     ],
-    'confirm' => 'Möchten Sie diesen Voucher wirklich löschen?',
     'error' => [
         'title' => 'Fehler!',
         'unknown' => 'Ein unbekannter Fehler ist aufgetreten.',

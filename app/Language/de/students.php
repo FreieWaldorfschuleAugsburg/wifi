@@ -21,8 +21,8 @@ return [
             'true' => 'Online',
             'false' => 'Offline'
         ],
+        'noDevices' => 'Keine Geräte'
     ],
-    'confirm' => 'Möchten Sie diesen Zugang wirklich löschen?',
     'error' => [
         'title' => 'Fehler!',
         'unknown' => 'Ein unbekannter Fehler ist aufgetreten.',

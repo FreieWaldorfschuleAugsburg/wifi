@@ -67,17 +67,21 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <?php
-                    foreach ($vouchers as $voucher) {
-                        echo '<tr>';
-                        echo '<td onmouseenter="blurText(this, false)" onmouseleave="blurText(this, true)" class="blurred">' . $voucher->code . '</td>';
-                        echo '<td>' . $voucher->quota . '</td>';
-                        echo '<td>' . $voucher->duration . 'm</td>';
-                        echo '<td>' . date("d.m.Y H:i", $voucher->create_time) . '</td>';
-                        echo '<td><a class="btn btn-danger btn-sm" href="javascript:confirmRedirect(\'' . base_url('admin/vouchers/delete') . '?id=' . $voucher->_id . '&returnUrl=/\')"><i class="fas fa-trash"></i> ' . lang('vouchers.list.delete') . '</a></td>';
-                        echo '</tr>';
-                    }
-                    ?>
+                    <?php foreach ($vouchers as $voucher) : ?>
+                        <tr>
+                            <td onmouseenter="blurText(this, false)" onmouseleave="blurText(this, true)"
+                                class="blurred"><?= $voucher->code ?></td>
+                            <td><?= $voucher->quota ?></td>
+                            <td><?= $voucher->duration ?></td>
+                            <td><?= date("d.m.Y H:i", $voucher->create_time) ?></td>
+                            <td>
+                                <button class="btn btn-danger btn-sm"
+                                        onclick="confirmRedirect('<?= base_url('admin/vouchers/delete') . '?id=' . $voucher->_id . '&returnUrl=/' ?>')">
+                                    <i class="fas fa-trash"></i> <?= lang('vouchers.list.delete') ?>
+                                </button>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
@@ -100,7 +104,7 @@
     }
 
     function confirmRedirect(url) {
-        if (confirm('<?= lang('vouchers.confirm') ?>')) {
+        if (confirm('<?= lang('app.confirm') ?>')) {
             window.location.href = url;
         }
     }
