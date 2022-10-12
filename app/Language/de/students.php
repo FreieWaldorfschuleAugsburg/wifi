@@ -16,7 +16,11 @@ return [
         'connectedClients' => 'davon verbunden',
         'actions' => 'Aktionen',
         'delete' => "Löschen",
-        'print' => 'Drucken'
+        'print' => 'Drucken',
+        'online' => [
+            'true' => 'Online',
+            'false' => 'Offline'
+        ],
     ],
     'confirm' => 'Möchten Sie diesen Zugang wirklich löschen?',
     'error' => [

@@ -34,24 +34,28 @@ class StudentController extends BaseController
 
                 $allClients = client()->stat_allusers();
                 $onlineClients = client()->list_clients();
+
                 foreach ($students as $key => $value) {
                     if (isset($value->tunnel_type) || isset($value->tunnel_medium_type)) {
                         unset($students[$key]);
                         continue;
                     }
 
+                    $value->devices = [];
                     $value->clients = 0;
                     foreach ($allClients as $client) {
                         if (property_exists($client, 'name') && $client->name === getenv('students.clientPrefix') . $value->name) {
+                            $value->devices[$client->mac] = false;
                             $value->clients++;
                         }
                     }
 
                     $value->connectedClients = 0;
-                    if ($value->clients) {
+                    if ($value->devices) {
                         // Count the amount of clients using this identity
                         foreach ($onlineClients as $client) {
                             if (property_exists($client, '1x_identity') && $client->{'1x_identity'} === $value->name) {
+                                $value->devices[$client->mac] = true;
                                 $value->connectedClients++;
                             }
                         }
@@ -162,6 +166,7 @@ class StudentController extends BaseController
 
                 // Kick client from network by blocking and un-blocking client
                 $clients = client()->list_clients();
+
                 $successfulDisconnectedClients = 0;
                 $unsuccessfulDisconnectedClients = 0;
                 foreach ($clients as $client) {

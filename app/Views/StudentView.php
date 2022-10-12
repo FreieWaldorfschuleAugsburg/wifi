@@ -52,7 +52,6 @@
                         <th scope="col"><?= lang('students.list.username') ?></th>
                         <th scope="col"><?= lang('students.list.password') ?></th>
                         <th scope="col"><?= lang('students.list.clients') ?></th>
-                        <th scope="col"><?= lang('students.list.connectedClients') ?></th>
                         <th scope="col"><?= lang('students.list.actions') ?></th>
                     </tr>
                     </thead>
@@ -62,8 +61,11 @@
                         echo '<tr>';
                         echo '<td>' . $student->name . '</td>';
                         echo '<td onmouseenter="blurText(this, false)" onmouseleave="blurText(this, true)" class="blurred">' . $student->x_password . '</td>';
-                        echo '<td>' . $student->clients . '</td>';
-                        echo '<td>' . $student->connectedClients . '</td>';
+                        echo '<td><ul>';
+                        foreach ($student->devices as $key => $value) {
+                            echo '<li>' . $key . ' <span class="badge bg-' . ($value ? 'success' : 'danger') . '">' . lang('students.list.online.' . ($value ? 'true' : 'false')) . '</span></li>';
+                        }
+                        echo '</ul></td>';
                         echo '<td><a class="btn btn-danger btn-sm" href="javascript:confirmRedirect(\'' . base_url('admin/students/delete') . '?id=' . $student->_id . '\')"><i class="fas fa-trash"></i> ' . lang('students.list.delete') . '</a>&nbsp;';
                         echo '<a class="btn btn-primary btn-sm" href="' . base_url('admin/students/print') . '?id=' . $student->_id . '"><i class="fas fa-print"></i> ' . lang('students.list.print') . '</button></td>';
                         echo '</tr>';
