@@ -26,6 +26,6 @@ return [
     'error' => [
         'title' => 'Fehler!',
         'unknown' => 'Ein unbekannter Fehler ist aufgetreten.',
-        'disallowed' => 'Dieser Voucher wurde von einem anderen Nutzer erstellt!'
+        'disallowed' => 'Dieser Voucher wurde nicht von Ihnen erstellt!'
     ]
 ];

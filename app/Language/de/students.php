@@ -13,7 +13,6 @@ return [
         'username' => 'Benutzername',
         'password' => 'Passwort',
         'clients' => 'Geräte',
-        'connectedClients' => 'davon verbunden',
         'actions' => 'Aktionen',
         'delete' => "Löschen",
         'print' => 'Drucken',
@@ -37,28 +36,29 @@ return [
     'print' => [
         'subtitle' => 'Schülerzugangsdaten',
         'credentials' => [
-            'title' => 'Ihre Zugangsdaten',
+            'title' => 'Deine Zugangsdaten',
             'username' => 'Benutzername',
             'password' => 'Passwort'
         ],
         'manual' => [
-            'title' => 'Bedienungsanleitung',
+            'title' => 'Einrichtungsanleitung',
             'text' => '
-                <h4>1. Schritt</h4>
-                <p>Begeben Sie sich in den WLAN-Bereich im zweiten Obergeschoss des großen Hauses.</p>
-                <h4>2. Schritt</h4>
-                <p>Verbinde Sie sich mit dem Netzwerk <b>FWA-Schüler</b>.</p>
-                <h4>3. Schritt</h4>
-                <p>Geben Sie nun die oben abgedruckten Zugangsdaten ein.</p>
-                
-                <h4>Fertig!</h4>
+                <p>
+                <b>1. Schritt</b>
+                Begib dich in einen WLAN-Bereich (z.B. 2. OG im Großen Haus).</br>
+                <b>2. Schritt</b>
+                Verbinde dich mit der SSID "FWA-Schüler".
+                <b>3. Schritt</b>
+                Gib nun die oben abgedruckten Zugangsdaten ein.
+                </p>
             '
         ],
         'terms' => [
             'title' => 'Nutzungsbedingungen',
             'text' => '
                 <p>Diese Zugangsdaten dürfen nur von der oben genannten Person verwendet werden. 
-                Die Weitergabe dieser Zugangsdaten an Dritte führt zum sofortigen Entzug der Nutzungsberechtigung.</p>
+                Die Weitergabe dieser Zugangsdaten an Dritte führt zum sofortigen Entzug der Nutzungsberechtigung.
+                Eine genaue Auflistung aller Bestimmungen findest du im WLAN-Vertrag.</p>
             '
         ]
     ]
