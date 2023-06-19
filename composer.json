@@ -1,7 +1,7 @@
 {
   "name": "waldorfaugsburg/wifi",
   "type": "project",
-  "description": "Web-application for manging RADIUS accounts and vouchers in UniFi networks. ",
+  "description": "Web-application for manging RADIUS accounts and vouchers in UniFi networks.",
   "license": "MIT",
   "authors": [
     {
