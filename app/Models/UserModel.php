@@ -2,23 +2,26 @@
 
 namespace App\Models;
 
-use App\Enums\UserRole;
-
 class UserModel
 {
     public string $username;
     public string $displayName;
-    public UserRole $role;
+    public bool $admin;
 
-    function __construct($username, $displayName, $role)
+    public array $sitesAvailable;
+    public string $currentSite;
+
+    function __construct($username, $displayName, $admin, $sitesAvailable, $currentSite)
     {
         $this->username = $username;
         $this->displayName = $displayName;
-        $this->role = $role;
+        $this->admin = $admin;
+        $this->sitesAvailable = $sitesAvailable;
+        $this->currentSite = $currentSite;
     }
 
-    function isAdmin(): bool
+    function getSiteName(): string
     {
-        return $this->role === UserRole::ADMIN;
+        return getSiteProperty($this->currentSite, 'name');
     }
 }

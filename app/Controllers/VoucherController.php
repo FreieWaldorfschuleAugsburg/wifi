@@ -14,18 +14,21 @@ class VoucherController extends BaseController
 {
     public function index(): string|RedirectResponse
     {
-        helper('auth');
-
         try {
-            if (!isLoggedIn()) {
+            $user = user();
+
+            if (is_null($user)) {
                 return redirect('login');
             }
 
-            if (!isAdmin()) {
+            if (!$user->admin) {
                 return redirect('/');
             }
 
-            helper('unifi');
+            if (!isVoucherEnabled($user->currentSite)) {
+                return redirect('/')->with('error', lang('menu.error.functionDisabled'));
+            }
+
             try {
                 $vouchers = client()->stat_voucher();
                 if ($vouchers === false) {
@@ -43,8 +46,6 @@ class VoucherController extends BaseController
 
     public function create(): RedirectResponse
     {
-        helper('auth');
-
         try {
             $user = user();
 
@@ -52,7 +53,7 @@ class VoucherController extends BaseController
                 return redirect('login');
             }
 
-            if (!$user->isAdmin()) {
+            if (!$user->admin) {
                 return redirect('/');
             }
 
@@ -60,7 +61,6 @@ class VoucherController extends BaseController
             $duration = $this->request->getPost('duration');
             $unit = $this->request->getPost('unit');
 
-            helper('unifi');
             try {
                 $result = client()->create_voucher($duration * $unit, 1, $quota, $user->username);
                 if ($result === false) {
@@ -85,7 +85,6 @@ class VoucherController extends BaseController
 
     public function delete(): RedirectResponse
     {
-        helper('auth');
         try {
             $user = user();
             if (is_null($user)) {
@@ -94,15 +93,13 @@ class VoucherController extends BaseController
 
             $id = $this->request->getGet('id');
             $returnUrl = $this->request->getGet('returnUrl');
-
-            helper('unifi');
             try {
                 $vouchers = client()->stat_voucher();
                 if ($vouchers === false) {
                     return redirect($returnUrl)->with('error', lang('vouchers.error.unknown'));
                 }
 
-                if (!$user->isAdmin()) {
+                if (!$user->admin) {
                     foreach ($vouchers as $voucher) {
                         if ($voucher->_id === $id && (!isset($voucher->note) || ($voucher->note !== $user->username))) {
                             return redirect($returnUrl)->with('error', lang('vouchers.error.disallowed'));

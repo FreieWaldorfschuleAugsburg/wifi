@@ -49,3 +49,15 @@ ad.admin.password = ''
 unifi.baseURL = ''
 unifi.username = ''
 unifi.password = ''
+
+unifi.sites = Site1,Site2
+
+# Site1
+unifi.site.Site1.group = UsersSite1
+unifi.site.Site1.voucher = true
+unifi.site.Site1.students = true
+
+# Site2
+unifi.site.Site2.group = UsersSite2
+unifi.site.Site2.voucher = true
+unifi.site.Site2.students = false

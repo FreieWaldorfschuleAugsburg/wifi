@@ -12,13 +12,10 @@ class IndexController extends BaseController
 {
     public function index(): string|RedirectResponse
     {
-        helper('auth');
-
         try {
             $user = user();
 
             if (!is_null($user)) {
-                helper('unifi');
                 try {
                     $vouchers = client()->stat_voucher();
 
@@ -42,8 +39,6 @@ class IndexController extends BaseController
 
     public function createVoucher(): RedirectResponse
     {
-        helper('auth');
-
         try {
             $user = user();
 
@@ -54,7 +49,6 @@ class IndexController extends BaseController
             $quota = $this->request->getPost('quota');
             $duration = $this->request->getPost('duration');
 
-            helper('unifi');
             try {
                 $result = client()->create_voucher($duration, 1, $quota, $user->username);
 

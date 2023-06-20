@@ -48,6 +48,7 @@ $routes->get('/admin/students/delete', 'StudentController::delete');
 $routes->get('/admin/students/print', 'StudentController::print');
 
 $routes->get('/cron', 'StudentController::cron');
+$routes->get('/site', 'AuthenticationController::changeSite');
 
 /*
  * --------------------------------------------------------------------

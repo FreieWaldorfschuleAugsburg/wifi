@@ -12,8 +12,6 @@ class StudentController extends BaseController
 {
     public function index(): string|RedirectResponse
     {
-        helper('auth');
-
         try {
             $user = user();
 
@@ -21,11 +19,14 @@ class StudentController extends BaseController
                 return redirect('login');
             }
 
-            if (!$user->isAdmin()) {
+            if (!$user->admin) {
                 return redirect('/');
             }
 
-            helper('unifi');
+            if (!isStudentEnabled($user->currentSite)) {
+                return redirect('/')->with('error', lang('menu.error.functionDisabled'));
+            }
+
             try {
                 $students = client()->list_radius_accounts();
                 if ($students === false) {
@@ -79,8 +80,6 @@ class StudentController extends BaseController
 
     public function create(): string|RedirectResponse
     {
-        helper('auth');
-
         try {
             $user = user();
 
@@ -88,15 +87,13 @@ class StudentController extends BaseController
                 return redirect('login');
             }
 
-            if (!$user->isAdmin()) {
+            if (!$user->admin) {
                 return redirect('/');
             }
 
             $name = str_replace(' ', '', ucwords($this->request->getPost('name'), ' '));
             $password = bin2hex(openssl_random_pseudo_bytes(getenv('students.passwordLength') / 2));
             $print = $this->request->getPost('print');
-
-            helper('unifi');
             try {
                 $students = client()->list_radius_accounts();
                 foreach ($students as $student) {
@@ -125,8 +122,6 @@ class StudentController extends BaseController
 
     public function delete(): string|RedirectResponse
     {
-        helper('auth');
-
         try {
             $user = user();
 
@@ -134,13 +129,11 @@ class StudentController extends BaseController
                 return redirect('login');
             }
 
-            if (!$user->isAdmin()) {
+            if (!$user->admin) {
                 return redirect('/');
             }
 
             $id = $this->request->getGet('id');
-
-            helper('unifi');
             try {
                 $students = client()->list_radius_accounts();
                 if ($students === false) {
@@ -195,8 +188,6 @@ class StudentController extends BaseController
 
     public function print(): string|RedirectResponse
     {
-        helper('auth');
-
         try {
             $user = user();
 
@@ -204,13 +195,12 @@ class StudentController extends BaseController
                 return redirect('login');
             }
 
-            if (!$user->isAdmin()) {
+            if (!$user->admin) {
                 return redirect('/');
             }
 
             $id = $this->request->getGet('id');
 
-            helper('unifi');
             try {
                 $students = client()->list_radius_accounts();
                 if ($students === false) {
@@ -240,7 +230,6 @@ class StudentController extends BaseController
             return;
         }
 
-        helper('unifi');
         try {
             $students = client()->list_radius_accounts();
             $clients = client()->list_clients();

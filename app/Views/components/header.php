@@ -17,9 +17,7 @@
     <link href="<?= base_url('/') ?>/assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= base_url('/') ?>/assets/css/bootstrap-dark-plugin.min.css" rel="stylesheet">
     <link href="<?= base_url('/') ?>/assets/img/logo.png" rel="icon">
-    <link rel="stylesheet" href="<?= base_url('/') ?>/assets/css/fontawesome.min.css"
-          integrity="sha512-1sCRPdkRXhBV2PBLUdRb4tMg1w2YPf37qatUFeS7zlBy7jJI8Lf4VHwWfZZfpXtYSLy85pkm9GaYVYMfw5BC1A=="
-          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link rel="stylesheet" href="<?= base_url('/') ?>/assets/css/fontawesome.min.css"/>
 
     <!-- Matomo -->
     <script>
@@ -27,12 +25,14 @@
         /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
         _paq.push(['trackPageView']);
         _paq.push(['enableLinkTracking']);
-        (function() {
-            var u="//matomo.waldorf-augsburg.de/";
-            _paq.push(['setTrackerUrl', u+'matomo.php']);
+        (function () {
+            var u = "//matomo.waldorf-augsburg.de/";
+            _paq.push(['setTrackerUrl', u + 'matomo.php']);
             _paq.push(['setSiteId', '2']);
-            var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-            g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+            var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+            g.async = true;
+            g.src = u + 'matomo.js';
+            s.parentNode.insertBefore(g, s);
         })();
     </script>
     <!-- End Matomo Code -->

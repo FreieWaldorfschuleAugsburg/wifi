@@ -25,7 +25,7 @@ function isAdmin(): bool
     if (is_null($user))
         return false;
 
-    return $user->isAdmin();
+    return $user->admin;
 }
 
 /**
@@ -76,15 +76,29 @@ function createUserModel(Connection $ldap, string $username): UserModel
         throw new AuthException('userGone');
 
     $data = beautifyEntries($entries);
-    $groups = beautifyGroups($data);
-    $role = determineUserGroup($ldap, $domain, $groups);
+    $topLayerGroups = beautifyGroups($data);
+    $groups = getGroupsRecursive($ldap, $domain, $topLayerGroups);
 
-    // Cancel if user is neither member of the admin nor the user group
-    if (is_null($role)) {
+    $sites = [];
+    foreach (getSites() as $site) {
+        $userGroup = getSiteProperty($site, 'group');
+        if (in_array($userGroup, $groups)) {
+            $sites[] = $site;
+        }
+    }
+
+    if (empty($sites)) {
         throw new AuthException('noPermissions');
     }
 
-    return new UserModel($username, $data['displayname'][0], $role);
+    $currentSite = session('SITE');
+    if (!$currentSite || !in_array($currentSite, $sites)) {
+        $currentSite = array_values($sites)[0];
+        session()->set('SITE', $currentSite);
+    }
+
+    $admin = in_array(getenv('ad.adminGroup'), $groups);
+    return new UserModel($username, $data['displayname'][0], $admin, $sites, $currentSite);
 }
 
 /**
@@ -116,27 +130,21 @@ function createConnection(string $username, string $password): Connection
     return $ldap;
 }
 
-function determineUserGroup(Connection $ldap, string $domain, array $groups): ?UserRole
+function getGroupsRecursive(Connection $ldap, string $domain, array $topLayerGroups): array
 {
-    if (!$groups) {
-        return null;
-    }
-
-    foreach (UserRole::cases() as $role) {
-        if (in_array($role->value, $groups, true)) {
-            return $role;
-        }
-    }
-
-    $finalRole = null;
-    foreach ($groups as $group) {
+    $groups = $topLayerGroups;
+    foreach ($topLayerGroups as $group) {
         $groupResult = @ldap_search($ldap, "dc=$domain,dc=local", "(&(objectCategory=group)(cn=$group))");
         $groupEntries = @ldap_get_entries($ldap, $groupResult);
         $data = beautifyEntries($groupEntries);
-        $finalRole = determineUserGroup($ldap, $domain, beautifyGroups($data));
-    }
+        $localGroups = beautifyGroups($data);
 
-    return $finalRole;
+        if (!empty($localGroups) && array_intersect($groups, $topLayerGroups) < count($topLayerGroups)) {
+            $groups[] = $localGroups;
+            $groups[] = getGroupsRecursive($ldap, $domain, $localGroups);
+        }
+    }
+    return $groups;
 }
 
 function beautifyGroups(array $data): array
