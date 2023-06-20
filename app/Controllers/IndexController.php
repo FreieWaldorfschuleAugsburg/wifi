@@ -16,8 +16,12 @@ class IndexController extends BaseController
             $user = user();
 
             if (!is_null($user)) {
+
+                $client = client();
                 try {
-                    $vouchers = client()->stat_voucher();
+                    $vouchers = connect($client)->stat_voucher();
+                    if (!$vouchers)
+                        throw new UniFiException();
 
                     foreach ($vouchers as $key => $value) {
                         if (isset($value->note) && $value->note !== $user->username) {
@@ -26,8 +30,8 @@ class IndexController extends BaseController
                     }
 
                     return $this->render('IndexView', ['vouchers' => $vouchers]);
-                } catch (UniFiException $ue) {
-                    return redirect('/')->with('error', $ue->getMessage());
+                } catch (UniFiException) {
+                    return handleUniFiException($client);
                 }
             }
         } catch (AuthException $e) {
@@ -49,8 +53,11 @@ class IndexController extends BaseController
             $quota = $this->request->getPost('quota');
             $duration = $this->request->getPost('duration');
 
+            $client = client();
             try {
-                $result = client()->create_voucher($duration, 1, $quota, $user->username);
+                $result = connect($client)->create_voucher($duration, 1, $quota, $user->username);
+                if (!$result)
+                    throw new UniFiException();
 
                 foreach ($result as $item) {
                     $createTime = $item->create_time;
@@ -60,8 +67,10 @@ class IndexController extends BaseController
                 }
 
                 return redirect('/')->with('error', 'Unknown error.');
-            } catch (UniFiException $ue) {
-                return redirect('/')->with('error', $ue->getMessage());
+            } catch (UniFiException) {
+                return handleUniFiException($client);
+            } finally {
+                $client->logout();
             }
         } catch (AuthException $e) {
             return handleAuthException($e);

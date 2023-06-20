@@ -14,7 +14,6 @@ class StudentController extends BaseController
     {
         try {
             $user = user();
-
             if (is_null($user)) {
                 return redirect('login');
             }
@@ -27,14 +26,21 @@ class StudentController extends BaseController
                 return redirect('/')->with('error', lang('menu.error.functionDisabled'));
             }
 
+            $networkClient = client();
             try {
-                $students = client()->list_radius_accounts();
+                connect($networkClient);
+
+                $students = $networkClient->list_radius_accounts();
                 if ($students === false) {
                     return $this->render('StudentView', ['students' => [], 'error' => lang('students.error.unknown')]);
                 }
 
-                $allClients = client()->stat_allusers();
-                $onlineClients = client()->list_clients();
+                $allClients = $networkClient->stat_allusers();
+                $onlineClients = $networkClient->list_clients();
+
+                if (!$allClients || !$onlineClients) {
+                    throw new UniFiException();
+                }
 
                 foreach ($students as $key => $value) {
                     if (isset($value->tunnel_type) || isset($value->tunnel_medium_type)) {
@@ -70,8 +76,10 @@ class StudentController extends BaseController
                 usort($students, fn($a, $b) => $b->connectedClients - $a->connectedClients);
 
                 return $this->render('StudentView', ['students' => $students]);
-            } catch (UniFiException $ue) {
-                return $this->render('StudentView', ['students' => [], 'error' => $ue->getMessage()]);
+            } catch (UniFiException) {
+                return handleUniFiException($networkClient);
+            } finally {
+                $networkClient->logout();
             }
         } catch (AuthException $e) {
             return handleAuthException($e);
@@ -94,15 +102,23 @@ class StudentController extends BaseController
             $name = str_replace(' ', '', ucwords($this->request->getPost('name'), ' '));
             $password = bin2hex(openssl_random_pseudo_bytes(getenv('students.passwordLength') / 2));
             $print = $this->request->getPost('print');
+
+            $client = client();
             try {
-                $students = client()->list_radius_accounts();
+                connect($client);
+
+                $students = $client->list_radius_accounts();
+                if (!$students) {
+                    throw new UniFiException();
+                }
+
                 foreach ($students as $student) {
                     if ($student->name === $name) {
                         return redirect('admin/students')->with('error', lang('students.error.alreadyExistent'));
                     }
                 }
 
-                $result = client()->create_radius_account($name, $password);
+                $result = $client->create_radius_account($name, $password);
                 if ($result === false) {
                     return redirect('admin/students')->with('error', lang('students.error.unknown'));
                 }
@@ -112,8 +128,10 @@ class StudentController extends BaseController
                 }
 
                 return redirect('admin/students')->with('student', $result[0]);
-            } catch (UniFiException $ue) {
-                return redirect('admin/students')->with('error', $ue->getMessage());
+            } catch (UniFiException) {
+                return handleUniFiException($client);
+            } finally {
+                $client->logout();
             }
         } catch (AuthException $e) {
             return handleAuthException($e);
@@ -124,7 +142,6 @@ class StudentController extends BaseController
     {
         try {
             $user = user();
-
             if (is_null($user)) {
                 return redirect('login');
             }
@@ -134,14 +151,18 @@ class StudentController extends BaseController
             }
 
             $id = $this->request->getGet('id');
+
+            $client = client();
             try {
-                $students = client()->list_radius_accounts();
-                if ($students === false) {
-                    return $this->render('StudentView', ['students' => [], 'error' => lang('students.error.unknown')]);
+                connect($client);
+
+                $students = $client->list_radius_accounts();
+                if (!$students) {
+                    throw new UniFiException();
                 }
 
-                $result = client()->delete_radius_account($id);
-                if ($result === false) {
+                $result = $client->delete_radius_account($id);
+                if (!$result) {
                     return redirect('admin/students')->with('error', lang('students.error.unknown'));
                 }
 
@@ -158,7 +179,10 @@ class StudentController extends BaseController
                 }
 
                 // Kick client from network by blocking and un-blocking client
-                $clients = client()->list_clients();
+                $clients = $client->list_clients();
+                if (!$clients) {
+                    throw new UniFiException();
+                }
 
                 $successfulDisconnectedClients = 0;
                 $unsuccessfulDisconnectedClients = 0;
@@ -178,8 +202,10 @@ class StudentController extends BaseController
                 } else {
                     return redirect('admin/students')->with('info', sprintf(lang('students.info.disconnected'), $successfulDisconnectedClients));
                 }
-            } catch (UniFiException $ue) {
-                return redirect('admin/students')->with('error', $ue->getMessage());
+            } catch (UniFiException) {
+                return handleUniFiException($client);
+            } finally {
+                $client->logout();
             }
         } catch (AuthException $e) {
             return handleAuthException($e);
@@ -190,7 +216,6 @@ class StudentController extends BaseController
     {
         try {
             $user = user();
-
             if (is_null($user)) {
                 return redirect('login');
             }
@@ -201,10 +226,13 @@ class StudentController extends BaseController
 
             $id = $this->request->getGet('id');
 
+            $client = client();
             try {
-                $students = client()->list_radius_accounts();
-                if ($students === false) {
-                    return $this->render('StudentView', ['students' => [], 'error' => lang('students.error.unknown')]);
+                connect($client);
+
+                $students = $client->list_radius_accounts();
+                if (!$students) {
+                    throw new UniFiException();
                 }
 
                 foreach ($students as $student) {
@@ -214,8 +242,10 @@ class StudentController extends BaseController
                 }
 
                 return redirect('admin/students')->with('error', lang('students.error.deleted'));
-            } catch (UniFiException $ue) {
-                return redirect('admin/students')->with('error', $ue->getMessage());
+            } catch (UniFiException) {
+                return handleUniFiException($client);
+            } finally {
+                $client->logout();
             }
         } catch (AuthException $e) {
             return handleAuthException($e);
@@ -231,40 +261,49 @@ class StudentController extends BaseController
         }
 
         try {
-            $students = client()->list_radius_accounts();
-            $clients = client()->list_clients();
+            $networkClient = client();
+            try {
+                connect($networkClient);
 
-            $start = floor(microtime(true) * 1000);
+                $students = $networkClient->list_radius_accounts();
+                $clients = $networkClient->list_clients();
 
-            foreach ($clients as $client) {
-                if (property_exists($client, '1x_identity')) {
-                    $identity = $client->{'1x_identity'};
+                $start = floor(microtime(true) * 1000);
 
-                    $found = false;
-                    foreach ($students as $student) {
-                        if ($student->name === $identity) {
-                            $found = true;
+                foreach ($clients as $client) {
+                    if (property_exists($client, '1x_identity')) {
+                        $identity = $client->{'1x_identity'};
 
-                            $clientName = getenv('students.clientPrefix') . $identity;
-                            if (!property_exists($client, 'name') || $client->name !== $clientName) {
-                                client()->edit_client_name($client->_id, $clientName);
-                                echo 'Renamed "' . $client->mac . '" to "' . $clientName . '"<br>';
+                        $found = false;
+                        foreach ($students as $student) {
+                            if ($student->name === $identity) {
+                                $found = true;
+
+                                $clientName = getenv('students.clientPrefix') . $identity;
+                                if (!property_exists($client, 'name') || $client->name !== $clientName) {
+                                    client()->edit_client_name($client->_id, $clientName);
+                                    echo 'Renamed "' . $client->mac . '" to "' . $clientName . '"<br>';
+                                }
                             }
                         }
-                    }
 
-                    if (!$found) {
-                        client()->block_sta($client->mac);
-                        client()->unblock_sta($client->mac);
+                        if (!$found) {
+                            client()->block_sta($client->mac);
+                            client()->unblock_sta($client->mac);
 
-                        echo 'Kicked "' . $client->mac . '" due to invalid identity "' . $identity . '"<br>';
+                            echo 'Kicked "' . $client->mac . '" due to invalid identity "' . $identity . '"<br>';
+                        }
                     }
                 }
-            }
 
-            echo 'Done! (' . floor(microtime(true) * 1000) - $start . 'ms)<br>';
-        } catch (UniFiException $ue) {
-            echo $ue->getTraceAsString();
+                echo 'Done! (' . floor(microtime(true) * 1000) - $start . 'ms)<br>';
+            } catch (UniFiException) {
+                echo $networkClient->get_last_error_message();
+            } finally {
+                $networkClient->logout();
+            }
+        } catch (AuthException $e) {
+            echo $e->getMessage();
         }
     }
 }

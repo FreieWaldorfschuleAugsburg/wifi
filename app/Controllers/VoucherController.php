@@ -29,15 +29,20 @@ class VoucherController extends BaseController
                 return redirect('/')->with('error', lang('menu.error.functionDisabled'));
             }
 
+            $client = client();
             try {
-                $vouchers = client()->stat_voucher();
+                connect($client);
+
+                $vouchers = $client->stat_voucher();
                 if ($vouchers === false) {
                     return $this->render('VoucherView', ['vouchers' => [], 'error' => lang('vouchers.error.unknown')]);
                 }
 
                 return $this->render('VoucherView', ['vouchers' => $vouchers]);
-            } catch (UniFiException $ue) {
-                return $this->render('VoucherView', ['vouchers' => [], 'error' => $ue->getMessage()]);
+            } catch (UniFiException) {
+                return handleUniFiException($client);
+            } finally {
+                $client->logout();
             }
         } catch (AuthException $e) {
             return handleAuthException($e);
@@ -48,7 +53,6 @@ class VoucherController extends BaseController
     {
         try {
             $user = user();
-
             if (is_null($user)) {
                 return redirect('login');
             }
@@ -61,22 +65,27 @@ class VoucherController extends BaseController
             $duration = $this->request->getPost('duration');
             $unit = $this->request->getPost('unit');
 
+            $client = client();
             try {
-                $result = client()->create_voucher($duration * $unit, 1, $quota, $user->username);
+                connect($client);
+
+                $result = $client->create_voucher($duration * $unit, 1, $quota, $user->username);
                 if ($result === false) {
                     return redirect('admin/vouchers')->with('error', lang('vouchers.error.unknown'));
                 }
 
                 foreach ($result as $item) {
                     $createTime = $item->create_time;
-                    $voucher = client()->stat_voucher($createTime)[0];
+                    $voucher = $client->stat_voucher($createTime)[0];
 
                     return redirect('admin/vouchers')->with('voucher', $voucher);
                 }
 
                 return redirect('admin/vouchers')->with('error', lang('vouchers.error.unknown'));
-            } catch (UniFiException $ue) {
-                return redirect('admin/vouchers')->with('error', $ue->getMessage());
+            } catch (UniFiException) {
+                return handleUniFiException($client);
+            } finally {
+                $client->logout();
             }
         } catch (AuthException $e) {
             return handleAuthException($e);
@@ -93,8 +102,12 @@ class VoucherController extends BaseController
 
             $id = $this->request->getGet('id');
             $returnUrl = $this->request->getGet('returnUrl');
+
+            $client = client();
             try {
-                $vouchers = client()->stat_voucher();
+                connect($client);
+
+                $vouchers = $client->stat_voucher();
                 if ($vouchers === false) {
                     return redirect($returnUrl)->with('error', lang('vouchers.error.unknown'));
                 }
@@ -107,14 +120,16 @@ class VoucherController extends BaseController
                     }
                 }
 
-                $result = client()->revoke_voucher($id);
+                $result = $client->revoke_voucher($id);
                 if ($result === false) {
                     return redirect($returnUrl)->with('error', lang('vouchers.error.unknown'));
                 }
 
                 return redirect($returnUrl);
-            } catch (UniFiException $ue) {
-                return redirect($returnUrl)->with('error', $ue->getMessage());
+            } catch (UniFiException) {
+                return handleUniFiException($client);
+            } finally {
+                $client->logout();
             }
         } catch (AuthException $e) {
             return handleAuthException($e);
