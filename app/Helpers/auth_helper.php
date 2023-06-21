@@ -34,13 +34,16 @@ function isAdmin(): bool
 function login(string $username, string $password): void
 {
     $connection = createConnection($username, $password);
-    createUserModel($connection, $username);
+    $user = createUserModel($connection, $username);
+
     session()->set('USER', $username);
+    session()->set('SITE', $user->currentSite);
 }
 
 function logout(): void
 {
     session()->remove('USER');
+    session()->remove('SITE');
 }
 
 /**
@@ -94,7 +97,6 @@ function createUserModel(Connection $ldap, string $username): UserModel
     $currentSite = session('SITE');
     if (!$currentSite || !in_array($currentSite, $sites)) {
         $currentSite = array_values($sites)[0];
-        session()->set('SITE', $currentSite);
     }
 
     $admin = in_array(getenv('ad.adminGroup'), $groups);
