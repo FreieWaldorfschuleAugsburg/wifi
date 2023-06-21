@@ -14,6 +14,7 @@ class StudentController extends BaseController
     {
         try {
             $user = user();
+
             if (is_null($user)) {
                 return redirect('login');
             }
@@ -39,7 +40,7 @@ class StudentController extends BaseController
                 $onlineClients = $networkClient->list_clients();
 
                 if (!$allClients || !$onlineClients) {
-                    throw new UniFiException();
+                    throw new UniFiException('error fetching clients');
                 }
 
                 foreach ($students as $key => $value) {
@@ -76,10 +77,8 @@ class StudentController extends BaseController
                 usort($students, fn($a, $b) => $b->connectedClients - $a->connectedClients);
 
                 return $this->render('StudentView', ['students' => $students]);
-            } catch (UniFiException) {
-                return handleUniFiException($networkClient);
-            } finally {
-                $networkClient->logout();
+            } catch (UniFiException $e) {
+                return handleUniFiException($networkClient, $e);
             }
         } catch (AuthException $e) {
             return handleAuthException($e);
@@ -109,7 +108,7 @@ class StudentController extends BaseController
 
                 $students = $client->list_radius_accounts();
                 if (!$students) {
-                    throw new UniFiException();
+                    throw new UniFiException('error fetching radius accounts');
                 }
 
                 foreach ($students as $student) {
@@ -128,10 +127,8 @@ class StudentController extends BaseController
                 }
 
                 return redirect('admin/students')->with('student', $result[0]);
-            } catch (UniFiException) {
-                return handleUniFiException($client);
-            } finally {
-                $client->logout();
+            } catch (UniFiException $e) {
+                return handleUniFiException($client, $e);
             }
         } catch (AuthException $e) {
             return handleAuthException($e);
@@ -158,7 +155,7 @@ class StudentController extends BaseController
 
                 $students = $client->list_radius_accounts();
                 if (!$students) {
-                    throw new UniFiException();
+                    throw new UniFiException('error fetching radius accounts');
                 }
 
                 $result = $client->delete_radius_account($id);
@@ -181,7 +178,7 @@ class StudentController extends BaseController
                 // Kick client from network by blocking and un-blocking client
                 $clients = $client->list_clients();
                 if (!$clients) {
-                    throw new UniFiException();
+                    throw new UniFiException('error fetching clients');
                 }
 
                 $successfulDisconnectedClients = 0;
@@ -202,10 +199,8 @@ class StudentController extends BaseController
                 } else {
                     return redirect('admin/students')->with('info', sprintf(lang('students.info.disconnected'), $successfulDisconnectedClients));
                 }
-            } catch (UniFiException) {
-                return handleUniFiException($client);
-            } finally {
-                $client->logout();
+            } catch (UniFiException $e) {
+                return handleUniFiException($client, $e);
             }
         } catch (AuthException $e) {
             return handleAuthException($e);
@@ -232,7 +227,7 @@ class StudentController extends BaseController
 
                 $students = $client->list_radius_accounts();
                 if (!$students) {
-                    throw new UniFiException();
+                    throw new UniFiException('error fetching radius accounts');
                 }
 
                 foreach ($students as $student) {
@@ -242,10 +237,8 @@ class StudentController extends BaseController
                 }
 
                 return redirect('admin/students')->with('error', lang('students.error.deleted'));
-            } catch (UniFiException) {
-                return handleUniFiException($client);
-            } finally {
-                $client->logout();
+            } catch (UniFiException $e) {
+                return handleUniFiException($client, $e);
             }
         } catch (AuthException $e) {
             return handleAuthException($e);
@@ -281,15 +274,15 @@ class StudentController extends BaseController
 
                                 $clientName = getenv('students.clientPrefix') . $identity;
                                 if (!property_exists($client, 'name') || $client->name !== $clientName) {
-                                    client()->edit_client_name($client->_id, $clientName);
+                                    $networkClient->edit_client_name($client->_id, $clientName);
                                     echo 'Renamed "' . $client->mac . '" to "' . $clientName . '"<br>';
                                 }
                             }
                         }
 
                         if (!$found) {
-                            client()->block_sta($client->mac);
-                            client()->unblock_sta($client->mac);
+                            $networkClient->block_sta($client->mac);
+                            $networkClient->unblock_sta($client->mac);
 
                             echo 'Kicked "' . $client->mac . '" due to invalid identity "' . $identity . '"<br>';
                         }
@@ -299,8 +292,6 @@ class StudentController extends BaseController
                 echo 'Done! (' . floor(microtime(true) * 1000) - $start . 'ms)<br>';
             } catch (UniFiException) {
                 echo $networkClient->get_last_error_message();
-            } finally {
-                $networkClient->logout();
             }
         } catch (AuthException $e) {
             echo $e->getMessage();

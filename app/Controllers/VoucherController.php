@@ -39,10 +39,8 @@ class VoucherController extends BaseController
                 }
 
                 return $this->render('VoucherView', ['vouchers' => $vouchers]);
-            } catch (UniFiException) {
-                return handleUniFiException($client);
-            } finally {
-                $client->logout();
+            } catch (UniFiException $e) {
+                return handleUniFiException($client, $e);
             }
         } catch (AuthException $e) {
             return handleAuthException($e);
@@ -82,10 +80,8 @@ class VoucherController extends BaseController
                 }
 
                 return redirect('admin/vouchers')->with('error', lang('vouchers.error.unknown'));
-            } catch (UniFiException) {
-                return handleUniFiException($client);
-            } finally {
-                $client->logout();
+            } catch (UniFiException $e) {
+                return handleUniFiException($client, $e);
             }
         } catch (AuthException $e) {
             return handleAuthException($e);
@@ -126,10 +122,8 @@ class VoucherController extends BaseController
                 }
 
                 return redirect($returnUrl);
-            } catch (UniFiException) {
-                return handleUniFiException($client);
-            } finally {
-                $client->logout();
+            } catch (UniFiException $e) {
+                return handleUniFiException($client, $e);
             }
         } catch (AuthException $e) {
             return handleAuthException($e);

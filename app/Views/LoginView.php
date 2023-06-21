@@ -9,7 +9,7 @@
                     <i class="fas fa-sign-in-alt"></i> <b><?= lang('login.title') ?></b>
                 </div>
                 <div class="card-body">
-                    <?= !empty(session('error')) ? '<div class="alert alert-danger mb-3"> <i class="fas fa-exclamation-triangle"></i> ' . lang('login.error.' . session('error')) . '</div>' : '' ?>
+                    <?= !empty(session('error')) ? '<div class="alert alert-danger mb-3"> <i class="fas fa-exclamation-triangle"></i> ' . session('error') . '</div>' : '' ?>
                     <form method="POST">
                         <div class="mb-3">
                             <label for="username" class="form-label"><?= lang('login.username') ?></label>

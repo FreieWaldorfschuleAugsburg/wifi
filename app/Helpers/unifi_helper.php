@@ -5,7 +5,7 @@ use App\Models\UniFiException;
 use CodeIgniter\HTTP\RedirectResponse;
 use UniFi_API\Client;
 use function App\Helpers\handleAuthException;
-use function App\Helpers\isLoggedIn;
+use function App\Helpers\logout;
 use function App\Helpers\user;
 
 /**
@@ -14,7 +14,9 @@ use function App\Helpers\user;
 function client(): Client
 {
     $user = user();
-    return new UniFi_API\Client(getenv('unifi.username'), getenv('unifi.password'), getenv('unifi.baseURL'), $user->currentSite);
+    $client = new UniFi_API\Client(getenv('unifi.username'), getenv('unifi.password'), getenv('unifi.baseURL'), $user->currentSite);
+    $_SESSION['unificookie'] = $client->get_cookie();
+    return $client;
 }
 
 /**
@@ -24,18 +26,15 @@ function connect(UniFi_API\Client $client): Client
 {
     $response = $client->login();
     if (!$response) {
-        throw new UniFiException();
+        throw new UniFiException('login error: ' . $response);
     }
 
     return $client;
 }
 
-function handleUniFiException(UniFi_API\Client $client): string|RedirectResponse
+function handleUniFiException(UniFi_API\Client $client, UniFiException $exception): string|RedirectResponse
 {
-    try {
-        return redirect('login')->with('error', $client->get_last_error_message());
-    } catch (AuthException $e) {
-        return handleAuthException($e);
-    }
+    logout();
+    return redirect('login')->with('error', $exception->getMessage() . ' (' . $client->get_last_error_message() . ')');
 }
 
