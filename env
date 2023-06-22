@@ -37,10 +37,11 @@ students.clientPrefix = 'STUDENT_'
 # ACTIVE DIRECTORY
 #--------------------------------------------------------------------
 
-ad.ldap = ''
-ad.domain = ''
-ad.admin.username = ''
-ad.admin.password = ''
+ad.host = ''
+ad.baseDN = ''
+ad.username = ''
+ad.password = ''
+ad.adminGroup = ''
 
 #--------------------------------------------------------------------
 # UNIFI

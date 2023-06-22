@@ -20,7 +20,7 @@ class IndexController extends BaseController
                 $client = client();
                 try {
                     $vouchers = connect($client)->stat_voucher();
-                    if (!$vouchers)
+                    if ($vouchers === false)
                         throw new UniFiException('error fetching vouchers');
 
                     foreach ($vouchers as $key => $value) {
@@ -61,7 +61,7 @@ class IndexController extends BaseController
 
                 foreach ($result as $item) {
                     $createTime = $item->create_time;
-                    $voucher = client()->stat_voucher($createTime)[0];
+                    $voucher = $client->stat_voucher($createTime)[0];
 
                     return redirect('/')->with('voucher', $voucher);
                 }

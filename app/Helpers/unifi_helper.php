@@ -23,13 +23,11 @@ function client(): Client
 function connect(UniFi_API\Client $client): Client
 {
     $response = $client->login();
-
     if (!$response) {
         throw new UniFiException('login error: ' . $response);
     }
 
     session()->set('unificookie', $client->get_cookie());
-
     return $client;
 }
 

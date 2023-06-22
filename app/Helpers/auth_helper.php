@@ -6,7 +6,10 @@ use App\Enums\UserRole;
 use App\Models\AuthException;
 use App\Models\UserModel;
 use CodeIgniter\HTTP\RedirectResponse;
-use LDAP\Connection;
+use LdapRecord\Connection;
+use LdapRecord\Container;
+use LdapRecord\Models\ActiveDirectory\User;
+use LdapRecord\Query\ObjectNotFoundException;
 
 /**
  * @throws AuthException
@@ -33,10 +36,20 @@ function isAdmin(): bool
  */
 function login(string $username, string $password): void
 {
-    $connection = createConnection($username, $password);
-    $user = createUserModel($connection, $username);
+    $connection = createConnection();
 
-    session()->set('USER', $username);
+    try {
+        $ldapUser = User::query()->where('samaccountname', '=', $username)->firstOrFail();
+    } catch (ObjectNotFoundException) {
+        throw new AuthException();
+    }
+
+    if (!$connection->auth()->attempt($ldapUser->getDn(), $password)) {
+        throw new AuthException();
+    }
+
+    $user = createUserModel($ldapUser);
+    session()->set('USER', $user->username);
     session()->set('SITE', $user->currentSite);
 }
 
@@ -51,42 +64,39 @@ function logout(): void
  */
 function user(): ?UserModel
 {
-    $userName = session('USER');
-    if (!$userName) {
+    $username = session('USER');
+    if (!$username) {
         return null;
     }
 
-    $connection = createAdminConnection();
-    return createUserModel($connection, $userName);
+    $connection = createConnection();
+
+    try {
+        $ldapUser = User::query()->where('samaccountname', '=', $username)->firstOrFail();
+    } catch (ObjectNotFoundException) {
+        throw new AuthException();
+    }
+
+    return createUserModel($ldapUser);
 }
 
 /**
  * @throws AuthException
  */
-function createUserModel(Connection $ldap, string $username): UserModel
+function createUserModel(User $ldapUser): UserModel
 {
-    $domain = getenv('ad.domain');
-    $result = @ldap_search($ldap, "dc=$domain,dc=local", "(sAMAccountName=$username)");
-    if (!$result)
-        throw new AuthException('userGone');
-
-    $entries = @ldap_get_entries($ldap, $result);
-    if (!$entries)
-        throw new AuthException('userGone');
-
-    // Assuming that the user was disabled or deleted since last login
-    if (!isset($entries['count']) || $entries['count'] !== 1)
-        throw new AuthException('userGone');
-
-    $data = beautifyEntries($entries);
-    $topLayerGroups = beautifyGroups($data);
-    $groups = getGroupsRecursive($ldap, $domain, $topLayerGroups);
+    $groups = getGroups($ldapUser);
+    $admin = in_array(getenv('ad.adminGroup'), $groups);
 
     $sites = [];
-    foreach (getSites() as $site) {
-        $userGroup = getSiteProperty($site, 'group');
-        if (in_array($userGroup, $groups)) {
-            $sites[] = $site;
+    if ($admin) {
+        $sites = getSites();
+    } else {
+        foreach (getSites() as $site) {
+            $userGroup = getSiteProperty($site, 'group');
+            if (in_array($userGroup, $groups)) {
+                $sites[] = $site;
+            }
         }
     }
 
@@ -99,78 +109,33 @@ function createUserModel(Connection $ldap, string $username): UserModel
         $currentSite = array_values($sites)[0];
     }
 
-    $admin = in_array(getenv('ad.adminGroup'), $groups);
-    return new UserModel($username, $data['displayname'][0], $admin, $sites, $currentSite);
+    return new UserModel($ldapUser->getAttribute('samaccountname')[0], $ldapUser->getName(), $admin, $sites, $currentSite);
 }
 
 /**
  * @throws AuthException
  */
-function createAdminConnection(): Connection
+function createConnection(): Connection
 {
-    return createConnection(getenv('ad.admin.username'), getenv('ad.admin.password'));
+    $connection = new Connection([
+        'hosts' => [getenv('ad.host')],
+        'base_dn' => getenv('ad.baseDN'),
+        'username' => getenv('ad.username'),
+        'password' => getenv('ad.password')
+    ]);
+
+    Container::addConnection($connection);
+    return $connection;
 }
 
-/**
- * @throws AuthException
- */
-function createConnection(string $username, string $password): Connection
+function getGroups(User $ldapUser): array
 {
-    $ldap = @ldap_connect(getenv('ad.ldap'));
-    if (!$ldap)
-        throw new AuthException('noConnection');
-
-    ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
-    ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
-
-    // Log in as domain user
-    $domain = getenv('ad.domain');
-    $bind = @ldap_bind($ldap, "$domain\\$username", $password);
-    if (!$bind)
-        throw new AuthException('invalidCredentials');
-
-    return $ldap;
-}
-
-function getGroupsRecursive(Connection $ldap, string $domain, array $topLayerGroups): array
-{
-    $groups = $topLayerGroups;
-    foreach ($topLayerGroups as $group) {
-        $groupResult = @ldap_search($ldap, "dc=$domain,dc=local", "(&(objectCategory=group)(cn=$group))");
-        $groupEntries = @ldap_get_entries($ldap, $groupResult);
-        $data = beautifyEntries($groupEntries);
-        $localGroups = beautifyGroups($data);
-
-        if (!empty($localGroups) && array_intersect($groups, $topLayerGroups) < count($topLayerGroups)) {
-            $groups[] = $localGroups;
-            $groups[] = getGroupsRecursive($ldap, $domain, $localGroups);
-        }
+    $names = [];
+    $groups = $ldapUser->groups()->recursive()->get();
+    foreach ($groups as $group) {
+        $names[] = $group->getName();
     }
-    return $groups;
-}
-
-function beautifyGroups(array $data): array
-{
-    $groups = [];
-    if (array_key_exists('memberof', $data)) {
-        foreach ($data['memberof'] as $entry) {
-            $groups[] = substr(explode(',', $entry)[0], 3);
-        }
-    }
-    return $groups;
-}
-
-function beautifyEntries(array $entries): array
-{
-    $data = [];
-    foreach ($entries[0] as $key => $value) {
-        if (is_numeric($key)) continue;
-        if ($key === 'count') continue;
-
-        $data[$key] = (array)$value;
-        unset($data[$key]['count']);
-    }
-    return $data;
+    return $names;
 }
 
 function handleAuthException(AuthException $exception): RedirectResponse
