@@ -41,11 +41,11 @@ function login(string $username, string $password): void
     try {
         $ldapUser = User::query()->where('samaccountname', '=', $username)->firstOrFail();
     } catch (ObjectNotFoundException) {
-        throw new AuthException();
+        throw new AuthException('invalidCredentials');
     }
 
     if (!$connection->auth()->attempt($ldapUser->getDn(), $password)) {
-        throw new AuthException();
+        throw new AuthException('invalidCredentials');
     }
 
     $user = createUserModel($ldapUser);
@@ -69,12 +69,10 @@ function user(): ?UserModel
         return null;
     }
 
-    $connection = createConnection();
-
     try {
         $ldapUser = User::query()->where('samaccountname', '=', $username)->firstOrFail();
     } catch (ObjectNotFoundException) {
-        throw new AuthException();
+        throw new AuthException('invalidCredentials');
     }
 
     return createUserModel($ldapUser);
@@ -140,5 +138,5 @@ function getGroups(User $ldapUser): array
 
 function handleAuthException(AuthException $exception): RedirectResponse
 {
-    return redirect('login')->with('error', $exception->getMessage());
+    return redirect('login')->with('error', lang('login.error.' . $exception->getMessage()));
 }
