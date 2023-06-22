@@ -1,6 +1,6 @@
 <div class="row mt-3 justify-content-center">
     <div class="col-lg-12">
-        <?= !empty(session('voucher')) ? '<div class="alert alert-success mb-3 text-center"> <i class="fas fa-check-circle fa-5x"></i><br/><h1>' . lang('index.voucher.created') . '</h1><h4>' . session('voucher')->code . '</h4></div>' : '' ?>
+        <?= !empty(session('voucher')) ? '<div class="alert alert-success mb-3 text-center"><h1><i class="fas fa-check-circle"></i> ' . lang('index.voucher.created') . '</h1><span style="font-size: 100px"><b>' . session('voucher')->code . '</b></span><h3>' . lang('index.voucher.createdHelp') . '</h3></div>' : '' ?>
         <?= isset($error) ? '<div class="alert alert-danger mb-3"> <i class="fas fa-exclamation-triangle"></i> <b>' . lang('index.error') . '</b> ' . $error . '</div>' : '' ?>
         <?= !empty(session('error')) ? '<div class="alert alert-danger mb-3"> <i class="fas fa-exclamation-triangle"></i> <b>' . lang('index.error') . '</b> ' . session('error') . '</div>' : '' ?>
 

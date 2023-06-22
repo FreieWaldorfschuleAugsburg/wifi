@@ -5,6 +5,7 @@ return [
     'voucher' => [
         'title' => 'Voucher erstellen',
         'created' => 'Voucher erstellt!',
+        'createdHelp' => 'Verbinden Sie sich mit dem WLAN "FWA-Gast" und<br>geben Sie den hier angezeigten Zugangscode ein.',
         'quota' => [
             'label' => 'Nutzungen',
             'unit' => 'Nutzer'
