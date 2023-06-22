@@ -14,9 +14,7 @@ use function App\Helpers\user;
 function client(): Client
 {
     $user = user();
-    $client = new UniFi_API\Client(getenv('unifi.username'), getenv('unifi.password'), getenv('unifi.baseURL'), $user->currentSite);
-    $_SESSION['unificookie'] = $client->get_cookie();
-    return $client;
+    return new UniFi_API\Client(getenv('unifi.username'), getenv('unifi.password'), getenv('unifi.baseURL'), $user->currentSite);
 }
 
 /**
@@ -25,9 +23,12 @@ function client(): Client
 function connect(UniFi_API\Client $client): Client
 {
     $response = $client->login();
+
     if (!$response) {
         throw new UniFiException('login error: ' . $response);
     }
+
+    session()->set('unificookie', $client->get_cookie());
 
     return $client;
 }
