@@ -2,7 +2,6 @@
 
 namespace App\Helpers;
 
-use App\Enums\UserRole;
 use App\Models\AuthException;
 use App\Models\UserModel;
 use CodeIgniter\HTTP\RedirectResponse;
@@ -69,6 +68,7 @@ function user(): ?UserModel
         return null;
     }
 
+    createConnection();
     try {
         $ldapUser = User::query()->where('samaccountname', '=', $username)->firstOrFail();
     } catch (ObjectNotFoundException) {

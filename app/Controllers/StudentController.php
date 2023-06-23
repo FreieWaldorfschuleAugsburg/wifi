@@ -32,16 +32,14 @@ class StudentController extends BaseController
                 connect($networkClient);
 
                 $students = $networkClient->list_radius_accounts();
-                if ($students === false) {
+                if ($students === false)
                     return $this->render('StudentView', ['students' => [], 'error' => lang('students.error.unknown')]);
-                }
 
                 $allClients = $networkClient->stat_allusers();
                 $onlineClients = $networkClient->list_clients();
 
-                if (!$allClients || !$onlineClients) {
-                    throw new UniFiException('error fetching clients');
-                }
+                if (!$allClients || !$onlineClients)
+                    return $this->render('StudentView', ['students' => [], 'error' => lang('students.error.unknown')]);
 
                 foreach ($students as $key => $value) {
                     if (isset($value->tunnel_type) || isset($value->tunnel_medium_type)) {
@@ -107,9 +105,9 @@ class StudentController extends BaseController
                 connect($client);
 
                 $students = $client->list_radius_accounts();
-                if (!$students) {
-                    throw new UniFiException('error fetching radius accounts');
-                }
+                if ($students === false)
+                    return $this->render('StudentView', ['students' => [], 'error' => lang('students.error.unknown')]);
+
 
                 foreach ($students as $student) {
                     if ($student->name === $name) {
@@ -118,9 +116,8 @@ class StudentController extends BaseController
                 }
 
                 $result = $client->create_radius_account($name, $password);
-                if ($result === false) {
+                if ($result === false)
                     return redirect('admin/students')->with('error', lang('students.error.unknown'));
-                }
 
                 if ($print) {
                     return $this->render('StudentPrintView', ['student' => $result[0]], false);
@@ -148,17 +145,16 @@ class StudentController extends BaseController
             }
 
             $id = $this->request->getGet('id');
-
-            $client = client();
+            $networkClient = client();
             try {
-                connect($client);
+                connect($networkClient);
 
-                $students = $client->list_radius_accounts();
-                if (!$students) {
-                    throw new UniFiException('error fetching radius accounts');
+                $students = $networkClient->list_radius_accounts();
+                if ($students === false) {
+                    return $this->render('StudentView', ['students' => [], 'error' => lang('students.error.unknown')]);
                 }
 
-                $result = $client->delete_radius_account($id);
+                $result = $networkClient->delete_radius_account($id);
                 if (!$result) {
                     return redirect('admin/students')->with('error', lang('students.error.unknown'));
                 }
@@ -176,9 +172,9 @@ class StudentController extends BaseController
                 }
 
                 // Kick client from network by blocking and un-blocking client
-                $clients = $client->list_clients();
-                if (!$clients) {
-                    throw new UniFiException('error fetching clients');
+                $clients = $networkClient->list_clients();
+                if ($clients === false) {
+                    return $this->render('StudentView', ['students' => [], 'error' => lang('students.error.unknown')]);
                 }
 
                 $successfulDisconnectedClients = 0;
@@ -200,7 +196,7 @@ class StudentController extends BaseController
                     return redirect('admin/students')->with('info', sprintf(lang('students.info.disconnected'), $successfulDisconnectedClients));
                 }
             } catch (UniFiException $e) {
-                return handleUniFiException($client, $e);
+                return handleUniFiException($networkClient, $e);
             }
         } catch (AuthException $e) {
             return handleAuthException($e);

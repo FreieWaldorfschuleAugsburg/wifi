@@ -4,8 +4,6 @@ use App\Models\AuthException;
 use App\Models\UniFiException;
 use CodeIgniter\HTTP\RedirectResponse;
 use UniFi_API\Client;
-use function App\Helpers\handleAuthException;
-use function App\Helpers\logout;
 use function App\Helpers\user;
 
 /**
@@ -33,7 +31,6 @@ function connect(UniFi_API\Client $client): Client
 
 function handleUniFiException(UniFi_API\Client $client, UniFiException $exception): string|RedirectResponse
 {
-    logout();
-    return redirect('login')->with('error', $exception->getMessage() . ' (' . $client->get_last_error_message() . ')');
+    return redirect('/')->with('error', $exception->getMessage() . ' (' . $client->get_last_error_message() . ')');
 }
 

@@ -21,7 +21,7 @@ class IndexController extends BaseController
                 try {
                     $vouchers = connect($client)->stat_voucher();
                     if ($vouchers === false)
-                        throw new UniFiException('error fetching vouchers');
+                        return $this->render('IndexView', ['vouchers' => [], 'error' => lang('vouchers.error.unknown')]);
 
                     foreach ($vouchers as $key => $value) {
                         if (isset($value->note) && $value->note !== $user->username) {
@@ -57,7 +57,7 @@ class IndexController extends BaseController
             try {
                 $result = connect($client)->create_voucher($duration, 1, $quota, $user->username);
                 if (!$result)
-                    throw new UniFiException('error creating voucher');
+                    return redirect('/')->with('error', lang('vouchers.error.unknown'));
 
                 foreach ($result as $item) {
                     $createTime = $item->create_time;
@@ -66,7 +66,7 @@ class IndexController extends BaseController
                     return redirect('/')->with('voucher', $voucher);
                 }
 
-                return redirect('/')->with('error', 'Unknown error.');
+                return redirect('/')->with('error', lang('vouchers.error.unknown'));
             } catch (UniFiException $e) {
                 return handleUniFiException($client, $e);
             }
