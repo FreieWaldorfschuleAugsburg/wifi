@@ -45,11 +45,11 @@ return [
             'text' => '
                 <p>
                 <b>1. Schritt</b>
-                Begib dich in einen WLAN-Bereich (z.B. 2. OG im Großen Haus).</br>
+                Begib dich in einen WLAN-Bereich (z. B. im 2. OG im Großen Haus).</br>
                 <b>2. Schritt</b>
-                Verbinde dich mit der SSID "FWA-Schüler".
+                Verbinde dich mit dem Netzwerk "FWA-Schüler".</br>
                 <b>3. Schritt</b>
-                Gib nun die oben abgedruckten Zugangsdaten ein.
+                Gib nun die oben abgedruckten Zugangsdaten ein!
                 </p>
             '
         ],
@@ -57,8 +57,8 @@ return [
             'title' => 'Nutzungsbedingungen',
             'text' => '
                 <p>Diese Zugangsdaten dürfen nur von der oben genannten Person verwendet werden. 
-                Die Weitergabe dieser Zugangsdaten an Dritte führt zum sofortigen Entzug der Nutzungsberechtigung.
-                Eine genaue Auflistung aller Bestimmungen findest du im WLAN-Vertrag.</p>
+                Die Weitergabe dieser Zugangsdaten an Dritte führt zum sofortigen Entzug der Nutzungsberechtigung.<br/>
+                Es gelten die Bestimmungen des WLAN-Vertrags.</p>
             '
         ]
     ]
