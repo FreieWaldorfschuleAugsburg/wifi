@@ -11,7 +11,13 @@
                 </div>
             </div>
             <div class="card-body text-center">
-                <h2><?= sprintf(lang('index.status.connected'), $clientsConnected) ?></h2>
+                <?php if ($clientsConnected == 0): ?>
+                    <h2><?= sprintf(lang('index.status.connected.none')) ?></h2>
+                <?php elseif ($clientsConnected == 1): ?>
+                    <h2><?= sprintf(lang('index.status.connected.singular')) ?></h2>
+                <?php else: ?>
+                    <h2><?= sprintf(lang('index.status.connected.plural'), $clientsConnected) ?></h2>
+                <?php endif; ?>
             </div>
         </div>
     </div>

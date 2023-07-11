@@ -4,7 +4,11 @@ return [
     'error' => 'Fehler!',
     'status' => [
         'title' => 'Status',
-        'connected' => 'Derzeit sind %s Nutzer mit dem Gastnetzwerk verbunden.'
+        'connected' => [
+            'none' => 'Derzeit ist kein Nutzer mit dem Gastnetzwerk verbunden.',
+            'singular' => 'Derzeit ist ein Nutzer mit dem Gastnetzwerk verbunden.',
+            'plural' => 'Derzeit sind %s Nutzer mit dem Gastnetzwerk verbunden.'
+        ]
     ],
     'voucher' => [
         'title' => 'Voucher erstellen',
