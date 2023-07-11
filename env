@@ -57,8 +57,10 @@ unifi.sites = Site1,Site2
 unifi.site.Site1.group = UsersSite1
 unifi.site.Site1.voucher = true
 unifi.site.Site1.students = true
+unifi.site.Site1.guestSSID = Guest
 
 # Site2
 unifi.site.Site2.group = UsersSite2
 unifi.site.Site2.voucher = true
 unifi.site.Site2.students = false
+unifi.site.Site2.guestSSID = Guest

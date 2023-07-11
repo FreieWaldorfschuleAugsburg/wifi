@@ -11,13 +11,13 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarMobileToggle">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <?php if (isVoucherEnabled($user->currentSite)): ?>
+                <?php if ($user->admin && isVoucherEnabled($user->currentSite)): ?>
                     <li class="nav-item">
                         <a class="nav-link" href="<?= base_url('admin/vouchers') ?>"><i class="fas fa-ticket"></i>
                             <?= lang('menu.admin.vouchers') ?></a>
                     </li>
                 <?php endif; ?>
-                <?php if (isStudentEnabled($user->currentSite)): ?>
+                <?php if ($user->admin && isStudentEnabled($user->currentSite)): ?>
                     <li class="nav-item">
                         <a class="nav-link" href="<?= base_url('admin/students') ?>"><i
                                     class="fas fa-graduation-cap"></i>

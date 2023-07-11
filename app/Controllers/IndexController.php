@@ -29,7 +29,15 @@ class IndexController extends BaseController
                         }
                     }
 
-                    return $this->render('IndexView', ['vouchers' => $vouchers]);
+                    $connectedClients = $client->list_clients();
+                    $clientsConnected = 0;
+                    foreach ($connectedClients as $connectedClient) {
+                        if (property_exists($connectedClient, 'essid') && $connectedClient->essid == getSiteProperty($user->currentSite, 'guestSSID')) {
+                            $clientsConnected++;
+                        }
+                    }
+
+                    return $this->render('IndexView', ['vouchers' => $vouchers, 'clientsConnected' => $clientsConnected]);
                 } catch (UniFiException $e) {
                     return handleUniFiException($client, $e);
                 }

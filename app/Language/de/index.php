@@ -2,6 +2,10 @@
 
 return [
     'error' => 'Fehler!',
+    'status' => [
+        'title' => 'Status',
+        'connected' => 'Derzeit sind %s Nutzer mit dem Gastnetzwerk verbunden.'
+    ],
     'voucher' => [
         'title' => 'Voucher erstellen',
         'created' => 'Voucher erstellt!',
