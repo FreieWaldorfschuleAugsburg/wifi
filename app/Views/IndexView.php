@@ -32,37 +32,37 @@
                 </div>
             </div>
             <div class="card-body">
-                <form action="<?= base_url('/createVoucher') ?>" method="POST">
-                    <div class="mb-3">
-                        <label for="quota" class="form-label"><?= lang('index.voucher.quota.label') ?> </label>
-                        <div class="progress" style="height: 30px; font-size: 15px">
-                            <div id="quotaBar" class="progress-bar" role="progressbar"></div>
-                        </div>
-                        <input type="range" min="1" max="<?= getenv('voucher.maxQuota') ?>" step="1"
-                               value="<?= getenv('voucher.defaultQuota') ?>" class="form-range"
-                               name="quota"
-                               id="quota"
-                               alt="<?= lang('index.voucher.quota.unit') ?>"
-                               onchange="update(this)"
-                               required>
+                <?= form_open('createVoucher') ?>
+                <div class="mb-3">
+                    <label for="quota" class="form-label"><?= lang('index.voucher.quota.label') ?> </label>
+                    <div class="progress" style="height: 30px; font-size: 15px">
+                        <div id="quotaBar" class="progress-bar" role="progressbar"></div>
                     </div>
+                    <input type="range" min="1" max="<?= getenv('voucher.maxQuota') ?>" step="1"
+                           value="<?= getenv('voucher.defaultQuota') ?>" class="form-range"
+                           name="quota"
+                           id="quota"
+                           alt="<?= lang('index.voucher.quota.unit') ?>"
+                           onchange="update(this)"
+                           required>
+                </div>
 
-                    <div class="mb-3">
-                        <label for="duration" class="form-label"><?= lang('index.voucher.duration.label') ?> </label>
-                        <div class="progress" style="height: 30px; font-size: 15px">
-                            <div id="durationBar" class="progress-bar" role="progressbar"></div>
-                        </div>
-                        <input type="range" min="1" max="<?= getenv('voucher.maxDuration') ?>" step="1"
-                               value="<?= getenv('voucher.defaultDuration') ?>" class="form-range"
-                               name="duration"
-                               id="duration"
-                               alt="<?= lang('index.voucher.duration.unit') ?>"
-                               onchange="update(this)"
-                               required>
+                <div class="mb-3">
+                    <label for="duration" class="form-label"><?= lang('index.voucher.duration.label') ?> </label>
+                    <div class="progress" style="height: 30px; font-size: 15px">
+                        <div id="durationBar" class="progress-bar" role="progressbar"></div>
                     </div>
+                    <input type="range" min="1" max="<?= getenv('voucher.maxDuration') ?>" step="1"
+                           value="<?= getenv('voucher.defaultDuration') ?>" class="form-range"
+                           name="duration"
+                           id="duration"
+                           alt="<?= lang('index.voucher.duration.unit') ?>"
+                           onchange="update(this)"
+                           required>
+                </div>
 
-                    <button type="submit" class="btn btn-primary"><?= lang('index.voucher.button') ?></button>
-                </form>
+                <button type="submit" class="btn btn-primary"><?= lang('index.voucher.button') ?></button>
+                <?= form_close() ?>
             </div>
         </div>
     </div>

@@ -11,7 +11,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <form action="<?= base_url('/admin/vouchers/create') ?>" method="POST">
+                <?= form_open('admin/vouchers/create') ?>
                     <div class="mb-3">
                         <label for="quota" class="form-label"><?= lang('vouchers.create.quota') ?></label>
                         <div class="input-group">
@@ -36,7 +36,7 @@
                     </div>
 
                     <button type="submit" class="btn btn-primary"><?= lang('vouchers.create.button') ?></button>
-                </form>
+                <?= form_close() ?>
             </div>
         </div>
     </div>

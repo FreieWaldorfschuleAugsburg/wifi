@@ -13,7 +13,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <form action="<?= base_url('/admin/students/create') ?>" method="POST">
+                <?= form_open('admin/students/create') ?>
                     <div class="mb-3">
                         <label for="name" class="form-label"><?= lang('students.create.name') ?></label>
                         <div class="input-group">
@@ -31,7 +31,7 @@
                     </div>
 
                     <button type="submit" class="btn btn-primary"><?= lang('students.create.button') ?></button>
-                </form>
+                <?= form_close() ?>
             </div>
         </div>
     </div>
