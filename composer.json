@@ -16,7 +16,8 @@
     "art-of-wifi/unifi-api-client": "^2.0",
     "ext-ldap": "*",
     "directorytree/ldaprecord": "^3.0",
-    "ext-openssl": "*"
+    "ext-openssl": "*",
+    "jumbojett/openid-connect-php": "^1.0"
   },
   "require-dev": {
     "fakerphp/faker": "^1.9",

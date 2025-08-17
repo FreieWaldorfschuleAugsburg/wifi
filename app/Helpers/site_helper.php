@@ -1,10 +1,5 @@
 <?php
 
-function isStudentEnabled(string $site): bool
-{
-    return getSiteProperty($site, 'students');
-}
-
 function isVoucherEnabled(string $site): bool
 {
     return getSiteProperty($site, 'voucher');

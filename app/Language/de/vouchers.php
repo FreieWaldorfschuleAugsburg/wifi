@@ -16,7 +16,7 @@ return [
     'list' => [
         'title' => 'Alle Voucher',
         'code' => "Code",
-        'quota' => "Nutzungen",
+        'quota' => "Verbleibende Nutzungen",
         'duration' => 'Dauer',
         'createTime' => "Erstellt am",
         'creator' => "Erstellt von",

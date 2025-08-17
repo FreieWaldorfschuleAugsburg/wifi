@@ -1,6 +1,6 @@
 <div class="row mt-3 justify-content-center">
     <div class="col-lg-12">
-        <?= !empty(session('voucher')) ? '<div class="alert alert-success mb-3 text-center"><h1><i class="fas fa-check-circle"></i> ' . lang('index.voucher.created') . '</h1><span style="font-size: 100px"><b>' . session('voucher')->code . '</b></span><h3>' . lang('index.voucher.createdHelp') . '</h3></div>' : '' ?>
+        <?= !empty(session('voucher')) ? '<div class="alert alert-success mb-3 text-center"><h1><i class="fas fa-check-circle"></i> ' . lang('index.voucher.created') . '</h1><span style="font-size: 100px"><b>' . substr(chunk_split(session('voucher')->code, 5, '-'), 0, 11) . '</b></span><h3>' . lang('index.voucher.createdHelp') . '</h3></div>' : '' ?>
         <?= isset($error) ? '<div class="alert alert-danger mb-3"> <i class="fas fa-exclamation-triangle"></i> <b>' . lang('index.error') . '</b> ' . $error . '</div>' : '' ?>
         <?= !empty(session('error')) ? '<div class="alert alert-danger mb-3"> <i class="fas fa-exclamation-triangle"></i> <b>' . lang('index.error') . '</b> ' . session('error') . '</div>' : '' ?>
 
@@ -92,7 +92,7 @@
                         <tr>
                             <td onmouseenter="blurText(this, false)" onmouseleave="blurText(this, true)"
                                 class="blurred"><?= $voucher->code ?></td>
-                            <td><?= $voucher->quota ?></td>
+                            <td><?= $voucher->quota - $voucher->used ?></td>
                             <td><?= $voucher->duration ?></td>
                             <td><?= date("d.m.Y H:i", $voucher->create_time) ?></td>
                             <td>

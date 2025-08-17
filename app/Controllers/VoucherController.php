@@ -8,6 +8,7 @@ use CodeIgniter\HTTP\RedirectResponse;
 use function App\Helpers\handleAuthException;
 use function App\Helpers\isAdmin;
 use function App\Helpers\isLoggedIn;
+use function App\Helpers\login;
 use function App\Helpers\user;
 
 class VoucherController extends BaseController
@@ -18,7 +19,7 @@ class VoucherController extends BaseController
             $user = user();
 
             if (is_null($user)) {
-                return redirect('login');
+                return login();
             }
 
             if (!$user->admin) {
@@ -43,16 +44,16 @@ class VoucherController extends BaseController
                 return handleUniFiException($client, $e);
             }
         } catch (AuthException $e) {
-            return handleAuthException($e);
+            return handleAuthException($this, $e);
         }
     }
 
-    public function create(): RedirectResponse
+    public function create(): string|RedirectResponse
     {
         try {
             $user = user();
             if (is_null($user)) {
-                return redirect('login');
+                return login();
             }
 
             if (!$user->admin) {
@@ -84,16 +85,16 @@ class VoucherController extends BaseController
                 return handleUniFiException($client, $e);
             }
         } catch (AuthException $e) {
-            return handleAuthException($e);
+            return handleAuthException($this, $e);
         }
     }
 
-    public function delete(): RedirectResponse
+    public function delete(): string|RedirectResponse
     {
         try {
             $user = user();
             if (is_null($user)) {
-                return redirect('login');
+                return login();
             }
 
             $id = $this->request->getGet('id');
@@ -126,7 +127,7 @@ class VoucherController extends BaseController
                 return handleUniFiException($client, $e);
             }
         } catch (AuthException $e) {
-            return handleAuthException($e);
+            return handleAuthException($this, $e);
         }
     }
 }

@@ -12,30 +12,30 @@
             </div>
             <div class="card-body">
                 <?= form_open('admin/vouchers/create') ?>
-                    <div class="mb-3">
-                        <label for="quota" class="form-label"><?= lang('vouchers.create.quota') ?></label>
-                        <div class="input-group">
-                            <span class="input-group-text" id="quotaPrepend"><i class="fas fa-users"></i></span>
-                            <input type="number" class="form-control" name="quota" id="quota"
-                                   aria-describedby="quotaPrepend" required>
-                        </div>
+                <div class="mb-3">
+                    <label for="quota" class="form-label"><?= lang('vouchers.create.quota') ?></label>
+                    <div class="input-group">
+                        <span class="input-group-text" id="quotaPrepend"><i class="fas fa-users"></i></span>
+                        <input type="number" class="form-control" name="quota" id="quota"
+                               aria-describedby="quotaPrepend" required>
                     </div>
+                </div>
 
-                    <div class="mb-3">
-                        <label for="duration" class="form-label"><?= lang('vouchers.create.duration.label') ?></label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-clock"></i></span>
-                            <input type="number" class="form-control" name="duration" id="duration" required>
+                <div class="mb-3">
+                    <label for="duration" class="form-label"><?= lang('vouchers.create.duration.label') ?></label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-clock"></i></span>
+                        <input type="number" class="form-control" name="duration" id="duration" required>
 
-                            <select class="form-select" name="unit" id="unit">
-                                <option value="1" selected><?= lang('vouchers.create.duration.minutes') ?></option>
-                                <option value="60"><?= lang('vouchers.create.duration.hours') ?></option>
-                                <option value="1440"><?= lang('vouchers.create.duration.days') ?></option>
-                            </select>
-                        </div>
+                        <select class="form-select" name="unit" id="unit">
+                            <option value="1" selected><?= lang('vouchers.create.duration.minutes') ?></option>
+                            <option value="60"><?= lang('vouchers.create.duration.hours') ?></option>
+                            <option value="1440"><?= lang('vouchers.create.duration.days') ?></option>
+                        </select>
                     </div>
+                </div>
 
-                    <button type="submit" class="btn btn-primary"><?= lang('vouchers.create.button') ?></button>
+                <button type="submit" class="btn btn-primary"><?= lang('vouchers.create.button') ?></button>
                 <?= form_close() ?>
             </div>
         </div>
@@ -65,9 +65,9 @@
                     <tbody>
                     <?php foreach ($vouchers as $voucher) : ?>
                         <tr>
-                            <td onmouseenter="blurText(this, false)" onmouseleave="blurText(this, false)"
+                            <td onmouseenter="blurText(this, false)" onmouseleave="blurText(this, true)"
                                 class="blurred"><?= $voucher->code ?></td>
-                            <td><?= $voucher->quota ?></td>
+                            <td><?= $voucher->quota - $voucher->used ?></td>
                             <td><?= $voucher->duration ?></td>
                             <td><?= date("d.m.Y H:i", $voucher->create_time) ?></td>
                             <td><?= $voucher->note ?></td>

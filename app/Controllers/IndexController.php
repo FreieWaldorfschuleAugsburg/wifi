@@ -6,6 +6,7 @@ use App\Models\AuthException;
 use App\Models\UniFiException;
 use CodeIgniter\HTTP\RedirectResponse;
 use function App\Helpers\handleAuthException;
+use function App\Helpers\login;
 use function App\Helpers\user;
 
 class IndexController extends BaseController
@@ -42,20 +43,19 @@ class IndexController extends BaseController
                     return handleUniFiException($client, $e);
                 }
             }
+            return login();
         } catch (AuthException $e) {
-            return handleAuthException($e);
+            return handleAuthException($this, $e);
         }
-
-        return redirect('login');
     }
 
-    public function createVoucher(): RedirectResponse
+    public function createVoucher(): string|RedirectResponse
     {
         try {
             $user = user();
 
             if (is_null($user)) {
-                return redirect('login');
+                return login();
             }
 
             $quota = $this->request->getPost('quota');
@@ -70,7 +70,6 @@ class IndexController extends BaseController
                 foreach ($result as $item) {
                     $createTime = $item->create_time;
                     $voucher = $client->stat_voucher($createTime)[0];
-
                     return redirect('/')->with('voucher', $voucher);
                 }
 
@@ -79,7 +78,7 @@ class IndexController extends BaseController
                 return handleUniFiException($client, $e);
             }
         } catch (AuthException $e) {
-            return handleAuthException($e);
+            return handleAuthException($this, $e);
         }
     }
 }

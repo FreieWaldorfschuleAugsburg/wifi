@@ -2,13 +2,13 @@
 
 namespace App\Helpers;
 
+use App\Controllers\BaseController;
 use App\Models\AuthException;
 use App\Models\UserModel;
 use CodeIgniter\HTTP\RedirectResponse;
-use LdapRecord\Connection;
-use LdapRecord\Container;
-use LdapRecord\Models\ActiveDirectory\User;
-use LdapRecord\Query\ObjectNotFoundException;
+use Exception;
+use Jumbojett\OpenIDConnectClient;
+use Jumbojett\OpenIDConnectClientException;
 
 /**
  * @throws AuthException
@@ -33,29 +33,44 @@ function isAdmin(): bool
 /**
  * @throws AuthException
  */
-function login(string $username, string $password): void
+function login(): RedirectResponse
 {
-    $connection = createConnection();
+    $oidc = createOIDC();
 
     try {
-        $ldapUser = User::query()->where('samaccountname', '=', $username)->firstOrFail();
-    } catch (ObjectNotFoundException) {
-        throw new AuthException('invalidCredentials');
-    }
+        $oidc->authenticate();
 
-    if (!$connection->auth()->attempt($ldapUser->getDn(), $password)) {
-        throw new AuthException('invalidCredentials');
-    }
+        $username = $oidc->requestUserInfo('preferred_username');
+        $name = $oidc->requestUserInfo('name');
+        $claims = $oidc->getVerifiedClaims();
+        $groups = property_exists($claims, "groups") ? $oidc->getVerifiedClaims()->groups : [];
 
-    $user = createUserModel($ldapUser);
-    session()->set('USER', $user->username);
-    session()->set('SITE', $user->currentSite);
+        $userModel = createUserModel($username, $name, $oidc->getIdToken(), $oidc->getRefreshToken(), $groups);
+        session()->set('USER', $userModel);
+
+        return redirect('/');
+    } catch (OpenIDConnectClientException $e) {
+        throw new AuthException("oidc_login_error", $e);
+    }
 }
 
-function logout(): void
+/**
+ * @throws AuthException
+ */
+function logout(): RedirectResponse
 {
-    session()->remove('USER');
-    session()->remove('SITE');
+    $oidc = createOIDC();
+
+    try {
+        $user = user();
+        session()->remove('USER');
+
+        $oidc->signOut($user->idToken, null);
+    } catch (OpenIDConnectClientException $e) {
+        throw new AuthException("oidc_logout_error", $e);
+    }
+
+    return redirect('/');
 }
 
 /**
@@ -63,27 +78,32 @@ function logout(): void
  */
 function user(): ?UserModel
 {
-    $username = session('USER');
-    if (!$username) {
+    $oidc = createOIDC();
+    $user = session('USER');
+    if (!$user) {
         return null;
     }
 
-    createConnection();
-    try {
-        $ldapUser = User::query()->where('samaccountname', '=', $username)->firstOrFail();
-    } catch (ObjectNotFoundException) {
-        throw new AuthException('invalidCredentials');
-    }
+    $refreshToken = $user->refreshToken;
 
-    return createUserModel($ldapUser);
+    try {
+        $response = $oidc->introspectToken($refreshToken, 'refresh_token', $oidc->getClientID(), $oidc->getClientSecret());
+        if (!$response->active)
+            return null;
+
+        // TODO update user
+
+        return $user;
+    } catch (Exception $e) {
+        throw new AuthException("oidc_refresh_error", $e);
+    }
 }
 
 /**
  * @throws AuthException
  */
-function createUserModel(User $ldapUser): UserModel
+function createUserModel(string $username, string $displayName, string $idToken, string $refreshToken, array $groups): UserModel
 {
-    $groups = getGroups($ldapUser);
     $admin = in_array(getenv('ad.adminGroup'), $groups);
 
     $sites = [];
@@ -102,41 +122,27 @@ function createUserModel(User $ldapUser): UserModel
         throw new AuthException('noPermissions');
     }
 
-    $currentSite = session('SITE');
-    if (!$currentSite || !in_array($currentSite, $sites)) {
-        $currentSite = array_values($sites)[0];
+    $currentSite = array_values($sites)[0];
+    return new UserModel($username, $displayName, $idToken, $refreshToken, $admin, $sites, $currentSite);
+}
+
+function createOIDC(): OpenIDConnectClient
+{
+    return new OpenIDConnectClient(
+        getenv('oidc.endpoint'),
+        getenv('oidc.clientId'),
+        getenv('oidc.clientSecret')
+    );
+}
+
+function handleAuthException(BaseController $controller, AuthException $exception): string
+{
+    $error = lang('loginError.' . $exception->getMessage());
+
+    if ($exception->getPrevious()) {
+        $error = $error . ' (' . $exception->getPrevious()->getMessage() . ')';
     }
 
-    return new UserModel($ldapUser->getAttribute('samaccountname')[0], $ldapUser->getName(), $admin, $sites, $currentSite);
-}
-
-/**
- * @throws AuthException
- */
-function createConnection(): Connection
-{
-    $connection = new Connection([
-        'hosts' => [getenv('ad.host')],
-        'base_dn' => getenv('ad.baseDN'),
-        'username' => getenv('ad.username'),
-        'password' => getenv('ad.password')
-    ]);
-
-    Container::addConnection($connection);
-    return $connection;
-}
-
-function getGroups(User $ldapUser): array
-{
-    $names = [];
-    $groups = $ldapUser->groups()->recursive()->get();
-    foreach ($groups as $group) {
-        $names[] = $group->getName();
-    }
-    return $names;
-}
-
-function handleAuthException(AuthException $exception): RedirectResponse
-{
-    return redirect('login')->with('error', lang('login.error.' . $exception->getMessage()));
+    // Exception can be ignored
+    return $controller->render('LoginErrorView', ['error' => $error], false);
 }

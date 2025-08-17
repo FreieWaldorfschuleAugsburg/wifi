@@ -6,8 +6,8 @@ use Exception;
 
 class AuthException extends Exception
 {
-    function __construct($message = '')
+    function __construct($message = '', $previous = null)
     {
-        parent::__construct($message);
+        parent::__construct($message, 0, $previous);
     }
 }
