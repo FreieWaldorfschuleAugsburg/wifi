@@ -1,6 +1,6 @@
 <div class="row mt-3 justify-content-center">
     <div class="col-lg-12">
-        <?= !empty(session('voucher')) ? '<div class="alert alert-success mb-3 text-center"> <i class="fas fa-check-circle fa-5x"></i><br/><h1>' . lang('vouchers.created') . '</h1><h4>' . session('voucher')->code . '</h4></div>' : '' ?>
+        <?= !empty(session('voucher')) ? '<div class="alert alert-success mb-3 text-center"><h1><i class="fas fa-check-circle"></i> ' . lang('index.voucher.created') . '</h1><span style="font-size: 100px"><b>' . substr(chunk_split(session('voucher')->code, 5, '-'), 0, 11) . '</b></span><h3>' . lang('index.voucher.createdHelp') . '</h3></div>' : '' ?>
         <?= isset($error) ? '<div class="alert alert-danger mb-3"> <i class="fas fa-exclamation-triangle"></i> <b>' . lang('vouchers.error.title') . '</b> ' . $error . '</div>' : '' ?>
         <?= !empty(session('error')) ? '<div class="alert alert-danger mb-3"> <i class="fas fa-exclamation-triangle"></i> <b>' . lang('vouchers.error.title') . '</b> ' . session('error') . '</div>' : '' ?>
 
@@ -31,6 +31,9 @@
                             <option value="1" selected><?= lang('vouchers.create.duration.minutes') ?></option>
                             <option value="60"><?= lang('vouchers.create.duration.hours') ?></option>
                             <option value="1440"><?= lang('vouchers.create.duration.days') ?></option>
+                            <option value="10080"><?= lang('vouchers.create.duration.weeks') ?></option>
+                            <option value="43800"><?= lang('vouchers.create.duration.months') ?></option>
+                            <option value="525600"><?= lang('vouchers.create.duration.years') ?></option>
                         </select>
                     </div>
                 </div>
@@ -72,6 +75,10 @@
                             <td><?= date("d.m.Y H:i", $voucher->create_time) ?></td>
                             <td><?= $voucher->note ?></td>
                             <td>
+                                <a class="btn btn-primary btn-sm"
+                                   href="<?= base_url('admin/vouchers/show') . '?id=' . $voucher->_id . '&returnUrl=admin/vouchers' ?>">
+                                    <i class="fas fa-eye"></i> <?= lang('vouchers.list.show') ?>
+                                </a>
                                 <button class="btn btn-danger btn-sm"
                                         onclick="confirmRedirect('<?= base_url('admin/vouchers/delete') . '?id=' . $voucher->_id ?>&returnUrl=admin/vouchers')">
                                     <i class="fas fa-trash"></i> <?= lang('vouchers.list.delete') ?>

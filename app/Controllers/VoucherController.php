@@ -89,6 +89,45 @@ class VoucherController extends BaseController
         }
     }
 
+    public function show(): string|RedirectResponse
+    {
+        try {
+            $user = user();
+            if (is_null($user)) {
+                return login();
+            }
+
+            $id = $this->request->getGet('id');
+            $returnUrl = $this->request->getGet('returnUrl');
+
+            $client = client();
+            try {
+                connect($client);
+
+                $vouchers = $client->stat_voucher();
+                if ($vouchers === false) {
+                    return redirect($returnUrl)->with('error', lang('vouchers.error.unknown'));
+                }
+
+                foreach ($vouchers as $voucher) {
+                    if ($voucher->_id !== $id) continue;
+
+                    if (!$user->admin && (!isset($voucher->note) || ($voucher->note !== $user->username))) {
+                        return redirect($returnUrl)->with('error', lang('vouchers.error.disallowed'));
+                    }
+
+                    return redirect($returnUrl)->with('voucher', $voucher);
+                }
+
+                return redirect($returnUrl);
+            } catch (UniFiException $e) {
+                return handleUniFiException($client, $e);
+            }
+        } catch (AuthException $e) {
+            return handleAuthException($this, $e);
+        }
+    }
+
     public function delete(): string|RedirectResponse
     {
         try {

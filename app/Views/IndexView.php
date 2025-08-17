@@ -43,7 +43,7 @@
                            name="quota"
                            id="quota"
                            alt="<?= lang('index.voucher.quota.unit') ?>"
-                           onchange="update(this)"
+                           onchange="updateQuota(this)"
                            required>
                 </div>
 
@@ -52,12 +52,12 @@
                     <div class="progress" style="height: 30px; font-size: 15px">
                         <div id="durationBar" class="progress-bar" role="progressbar"></div>
                     </div>
-                    <input type="range" min="1" max="<?= getenv('voucher.maxDuration') ?>" step="1"
+                    <input type="range" min="10" max="<?= getenv('voucher.maxDuration') ?>" step="1"
                            value="<?= getenv('voucher.defaultDuration') ?>" class="form-range"
                            name="duration"
                            id="duration"
                            alt="<?= lang('index.voucher.duration.unit') ?>"
-                           onchange="update(this)"
+                           onchange="updateDuration(this)"
                            required>
                 </div>
 
@@ -96,6 +96,10 @@
                             <td><?= $voucher->duration ?></td>
                             <td><?= date("d.m.Y H:i", $voucher->create_time) ?></td>
                             <td>
+                                <a class="btn btn-primary btn-sm"
+                                        href="<?= base_url('admin/vouchers/show') . '?id=' . $voucher->_id . '&returnUrl=/' ?>">
+                                    <i class="fas fa-eye"></i> <?= lang('vouchers.list.show') ?>
+                                </a>
                                 <button class="btn btn-danger btn-sm"
                                         onclick="confirmRedirect('<?= base_url('admin/vouchers/delete') . '?id=' . $voucher->_id . '&returnUrl=/' ?>')">
                                     <i class="fas fa-trash"></i> <?= lang('vouchers.list.delete') ?>
@@ -114,14 +118,21 @@
     document.addEventListener("DOMContentLoaded", () => {
         const elements = document.querySelectorAll('input[type=range]');
         for (let i = 0; i < elements.length; i++) {
-            update(elements[i])
+            const element = elements[i];
+            element.dispatchEvent(new Event("change"))
         }
     });
 
-    function update(element) {
+    function updateQuota(element) {
         const bar = document.getElementById(element.id + 'Bar');
         bar.textContent = element.value + ' ' + element.alt;
-        bar.style.width = ((element.value / element.max) * 100) + '%';
+        bar.style.width = ((element.value / element.max) * 100) - 1 + '%';
+    }
+
+    function updateDuration(element) {
+        const bar = document.getElementById(element.id + 'Bar');
+        bar.textContent = element.value + ' ' + element.alt;
+        bar.style.width = ((element.value / element.max) * 100) - 3.5 + '%';
     }
 
     function confirmRedirect(url) {

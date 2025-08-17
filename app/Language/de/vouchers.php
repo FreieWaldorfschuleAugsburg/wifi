@@ -8,7 +8,10 @@ return [
             'label' => 'Dauer',
             'minutes' => 'Minute(n)',
             'hours' => 'Stunde(n)',
-            'days' => 'Tag(e)'
+            'days' => 'Tag(e)',
+            'weeks' => 'Woche(n)',
+            'months' => 'Monat(e)',
+            'years' => 'Jahr(e)'
         ],
         'button' => 'Erstellen'
     ],
@@ -17,10 +20,11 @@ return [
         'title' => 'Alle Voucher',
         'code' => "Code",
         'quota' => "Verbleibende Nutzungen",
-        'duration' => 'Dauer',
+        'duration' => 'Dauer (min.)',
         'createTime' => "Erstellt am",
         'creator' => "Erstellt von",
         'actions' => 'Aktionen',
+        'show' => 'Anzeigen',
         'delete' => 'Löschen'
     ],
     'error' => [

@@ -14,6 +14,7 @@ $routes->get('/logout', 'AuthenticationController::logout');
 
 $routes->get('/admin/vouchers', 'VoucherController::index');
 $routes->post('/admin/vouchers/create', 'VoucherController::create');
+$routes->get('/admin/vouchers/show', 'VoucherController::show');
 $routes->get('/admin/vouchers/delete', 'VoucherController::delete');
 
 $routes->get('/admin/students', 'StudentController::index');

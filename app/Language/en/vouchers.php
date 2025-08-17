@@ -8,7 +8,10 @@ return [
             'label' => 'Duration',
             'minutes' => 'minute(s)',
             'hours' => 'hour(s)',
-            'days' => 'day(s)'
+            'days' => 'day(s)',
+            'weeks' => 'week(s)',
+            'months' => 'month(s)',
+            'years' => 'year(s)'
         ],
         'button' => 'Create'
     ],
@@ -17,10 +20,11 @@ return [
         'title' => 'All vouchers',
         'code' => "Code",
         'quota' => "Usages",
-        'duration' => 'Duration',
+        'duration' => 'Duration (min.)',
         'createTime' => "Created on",
         'creator' => "Created by",
         'actions' => 'Actions',
+        'show' => 'Show',
         'delete' => 'Delete'
     ],
     'error' => [

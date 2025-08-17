@@ -40,6 +40,8 @@
                         <i class="fas fa-user"></i> <?= $user->displayName ?>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="<?= getenv('oidc.accountManager') ?>"><i
+                                        class="fas fa-user-cog"></i> <?= lang('menu.self.account') ?></a></li>
                         <li><a class="dropdown-item" href="<?= base_url('logout') ?>"><i
                                         class="fas fa-sign-out-alt"></i> <?= lang('menu.self.logout') ?></a></li>
                     </ul>
