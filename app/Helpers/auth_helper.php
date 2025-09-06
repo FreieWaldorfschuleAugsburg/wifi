@@ -104,7 +104,7 @@ function user(): ?UserModel
  */
 function createUserModel(string $username, string $displayName, string $idToken, string $refreshToken, array $groups): UserModel
 {
-    $admin = in_array(getenv('ad.adminGroup'), $groups);
+    $admin = in_array(getenv('oidc.adminGroup'), $groups);
 
     $sites = [];
     if ($admin) {

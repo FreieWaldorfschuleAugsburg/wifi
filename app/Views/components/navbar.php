@@ -17,6 +17,12 @@
                             <?= lang('menu.admin.vouchers') ?></a>
                     </li>
                 <?php endif; ?>
+                <?php if ($user->admin && isStudentEnabled($user->currentSite)): ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?= base_url('admin/students') ?>"><i class="fas fa-user-graduate"></i>
+                            <?= lang('menu.admin.students') ?></a>
+                    </li>
+                <?php endif; ?>
             </ul>
             <ul class="navbar-nav">
                 <li class="nav-item dropdown">

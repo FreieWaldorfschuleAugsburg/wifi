@@ -3,6 +3,7 @@
 return [
     'admin' => 'Administration',
     'admin.vouchers' => "Voucher",
+    'admin.students' => "Schülerzugänge",
     'self.logout' => 'Abmelden',
     'self.account' => 'Kontoverwaltung',
     'error' => [
