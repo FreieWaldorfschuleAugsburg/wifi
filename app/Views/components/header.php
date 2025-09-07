@@ -1,3 +1,9 @@
+<?php
+
+use App\Models\AuthException;
+use function App\Helpers\user;
+
+?>
 <!DOCTYPE html>
 <html lang="<?= service('request')->getLocale(); ?>">
 
@@ -29,6 +35,13 @@
             var u = "//matomo.waldorf-augsburg.de/";
             _paq.push(['setTrackerUrl', u + 'matomo.php']);
             _paq.push(['setSiteId', '2']);
+
+            <?php try{if($user = user()): ?>
+            _paq.push(['setUserId', '<?= $user->username ?>'])
+            <?php endif;}catch (AuthException $e) {
+
+        } ?>
+
             var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
             g.async = true;
             g.src = u + 'matomo.js';
