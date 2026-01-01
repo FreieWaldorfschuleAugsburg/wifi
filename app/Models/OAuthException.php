@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Exception;
 
-class AuthException extends Exception
+class OAuthException extends Exception
 {
     function __construct($message = '', $previous = null)
     {

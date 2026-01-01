@@ -2,8 +2,7 @@
 
 namespace App\Helpers;
 
-use App\Controllers\BaseController;
-use App\Models\AuthException;
+use App\Models\OAuthException;
 use App\Models\UserModel;
 use CodeIgniter\HTTP\RedirectResponse;
 use Exception;
@@ -11,7 +10,7 @@ use Jumbojett\OpenIDConnectClient;
 use Jumbojett\OpenIDConnectClientException;
 
 /**
- * @throws AuthException
+ * @throws OAuthException
  */
 function isLoggedIn(): bool
 {
@@ -19,7 +18,7 @@ function isLoggedIn(): bool
 }
 
 /**
- * @throws AuthException
+ * @throws OAuthException
  */
 function isAdmin(): bool
 {
@@ -31,7 +30,7 @@ function isAdmin(): bool
 }
 
 /**
- * @throws AuthException
+ * @throws OAuthException
  */
 function login(): RedirectResponse
 {
@@ -50,12 +49,12 @@ function login(): RedirectResponse
 
         return redirect('/');
     } catch (OpenIDConnectClientException $e) {
-        throw new AuthException("oidc_login_error", $e);
+        throw new OAuthException("oidc_login_error", $e);
     }
 }
 
 /**
- * @throws AuthException
+ * @throws OAuthException
  */
 function logout(): RedirectResponse
 {
@@ -67,14 +66,14 @@ function logout(): RedirectResponse
 
         $oidc->signOut($user->idToken, null);
     } catch (OpenIDConnectClientException $e) {
-        throw new AuthException("oidc_logout_error", $e);
+        throw new OAuthException("oidc_logout_error", $e);
     }
 
     return redirect('/');
 }
 
 /**
- * @throws AuthException
+ * @throws OAuthException
  */
 function user(): ?UserModel
 {
@@ -95,13 +94,10 @@ function user(): ?UserModel
 
         return $user;
     } catch (Exception $e) {
-        throw new AuthException("oidc_refresh_error", $e);
+        throw new OAuthException("oidc_refresh_error", $e);
     }
 }
 
-/**
- * @throws AuthException
- */
 function createUserModel(string $username, string $displayName, string $idToken, string $refreshToken, array $groups): UserModel
 {
     $admin = in_array(getenv('oidc.adminGroup'), $groups);
@@ -118,12 +114,13 @@ function createUserModel(string $username, string $displayName, string $idToken,
         }
     }
 
-    if (empty($sites)) {
-        throw new AuthException('noPermissions');
-    }
-
     $currentSite = array_values($sites)[0];
     return new UserModel($username, $displayName, $idToken, $refreshToken, $admin, $sites, $currentSite);
+}
+
+function isPermitted(UserModel $user): bool
+{
+    return !empty($user->sitesAvailable);
 }
 
 function createOIDC(): OpenIDConnectClient
@@ -133,16 +130,4 @@ function createOIDC(): OpenIDConnectClient
         getenv('oidc.clientId'),
         getenv('oidc.clientSecret')
     );
-}
-
-function handleAuthException(BaseController $controller, AuthException $exception): string
-{
-    $error = lang('loginError.' . $exception->getMessage());
-
-    if ($exception->getPrevious()) {
-        $error = $error . ' (' . $exception->getPrevious()->getMessage() . ')';
-    }
-
-    // Exception can be ignored
-    return $controller->render('LoginErrorView', ['error' => $error], false);
 }

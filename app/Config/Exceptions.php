@@ -2,6 +2,8 @@
 
 namespace Config;
 
+use App\Libraries\OAuthExceptionHandler;
+use App\Models\OAuthException;
 use CodeIgniter\Config\BaseConfig;
 use CodeIgniter\Debug\ExceptionHandler;
 use CodeIgniter\Debug\ExceptionHandlerInterface;
@@ -101,6 +103,10 @@ class Exceptions extends BaseConfig
      */
     public function handler(int $statusCode, Throwable $exception): ExceptionHandlerInterface
     {
+        if ($exception instanceof OAuthException) {
+            return new OAuthExceptionHandler($this);
+        }
+
         return new ExceptionHandler($this);
     }
 }

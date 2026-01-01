@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
         <a class="navbar-brand" href="<?= base_url('/') ?>">
             <img src="<?= base_url('/') ?>/assets/img/logo.png" width="30" height="30" class="d-inline-block align-top"
@@ -14,13 +14,13 @@
                 <?php if ($user->admin && isVoucherEnabled($user->currentSite)): ?>
                     <li class="nav-item">
                         <a class="nav-link" href="<?= base_url('admin/vouchers') ?>"><i class="fas fa-ticket"></i>
-                            <?= lang('menu.admin.vouchers') ?></a>
+                            <?= lang('navbar.admin.vouchers') ?></a>
                     </li>
                 <?php endif; ?>
                 <?php if ($user->admin && isStudentEnabled($user->currentSite)): ?>
                     <li class="nav-item">
                         <a class="nav-link" href="<?= base_url('admin/students') ?>"><i class="fas fa-user-graduate"></i>
-                            <?= lang('menu.admin.students') ?></a>
+                            <?= lang('navbar.admin.students') ?></a>
                     </li>
                 <?php endif; ?>
             </ul>
@@ -46,11 +46,14 @@
                         <i class="fas fa-user"></i> <?= $user->displayName ?>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="<?= getenv('oidc.accountManager') ?>"><i
-                                        class="fas fa-user-cog"></i> <?= lang('menu.self.account') ?></a></li>
                         <li><a class="dropdown-item" href="<?= base_url('logout') ?>"><i
-                                        class="fas fa-sign-out-alt"></i> <?= lang('menu.self.logout') ?></a></li>
+                                        class="fas fa-sign-out-alt"></i> <?= lang('navbar.logout') ?></a></li>
                     </ul>
+                </li>
+                <li>
+                    <a class="nav-link" href="<?= getenv('oidc.portalUrl') ?>">
+                        <i class="fas fa-external-link"></i> <?= lang('navbar.portal') ?>
+                    </a>
                 </li>
             </ul>
         </div>

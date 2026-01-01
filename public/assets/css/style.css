@@ -1,21 +1,37 @@
-@media (prefers-color-scheme: light) {
-    .visible {
-        color: black;
-    }
-
-    .blurred {
-        color: transparent;
-        text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    }
+@font-face {
+    font-family: 'MetaPlus';
+    font-style: normal;
+    src: url("../webfonts/MetaPlus.woff2");
 }
 
-@media (prefers-color-scheme: dark) {
-    .visible {
-        color: white;
-    }
+@font-face {
+    font-family: 'RoAkazie';
+    font-style: normal;
+    src: url("../webfonts/RoAkazie.woff2");
+}
 
-    .blurred {
-        color: transparent;
-        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-    }
+body {
+    font-family: MetaPlus, serif !important;
+    background-color: rgb(15 23 42) !important;
+}
+
+/*.card {
+    background-color: #141e37 !important;
+}*/
+
+.navbar {
+    background-color: rgb(24, 33, 55) !important;
+}
+
+.navbar-brand {
+    font-family: RoAkazie, serif !important;
+}
+
+.visible {
+    color: white !important;
+}
+
+.blurred {
+    color: transparent !important;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
