@@ -49,7 +49,7 @@ function login(): RedirectResponse
 
         return redirect('/');
     } catch (OpenIDConnectClientException $e) {
-        throw new OAuthException("oidc_login_error", $e);
+        throw new OAuthException("login", $e);
     }
 }
 
@@ -66,7 +66,7 @@ function logout(): RedirectResponse
 
         $oidc->signOut($user->idToken, null);
     } catch (OpenIDConnectClientException $e) {
-        throw new OAuthException("oidc_logout_error", $e);
+        throw new OAuthException("logout", $e);
     }
 
     return redirect('/');
@@ -94,7 +94,7 @@ function user(): ?UserModel
 
         return $user;
     } catch (Exception $e) {
-        throw new OAuthException("oidc_refresh_error", $e);
+        throw new OAuthException("refresh", $e);
     }
 }
 
