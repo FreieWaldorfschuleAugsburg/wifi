@@ -16,12 +16,13 @@ class ComponentsFilter implements FilterInterface
 
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null): ResponseInterface
     {
-        $beforeContent = view('components/header');
+        helper('oauth');
+        $user = user();
+        $beforeContent = view('components/header', ['user' => $user]);
         if (is_null($arguments) || !in_array('noNavbar', $arguments)) {
-            helper('oauth');
             helper('site');
 
-            $beforeContent .= view('components/navbar', ['user' => user()]);
+            $beforeContent .= view('components/navbar', ['user' => $user]);
         }
 
         $afterContent = "";
