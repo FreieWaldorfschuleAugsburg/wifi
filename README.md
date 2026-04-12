@@ -1,3 +1,5 @@
+> Active development was moved: https://codeberg.org/WaldorfAugsburg/wifi
+
 # Wi-Fi management interface for UniFi networks
 
 ![](https://i.imgur.com/E5qDzk8.png)
